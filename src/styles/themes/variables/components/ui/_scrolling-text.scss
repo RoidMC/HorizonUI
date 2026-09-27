@@ -1,0 +1,4 @@
+:root {
+    // 透明度过渡时长（组件内联 style 引用；原项目遗漏此令牌、此处补上让 var 真的有值）
+    --h-scrolling-text-opacity-transition: opacity 0.3s ease;
+}

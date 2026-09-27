@@ -1,0 +1,18 @@
+/**
+ * @roidmc/horizon-ui · 皮肤入口（styled 版）
+ *
+ * 只装「UI 组件自身需要」的东西：
+ *   - tokens      --h-* 设计变量默认值（含组件级 --h-button-* 等）
+ *   - animation   组件用到的 keyframes / transition 类（h-spin、h-dialog-* …）
+ *   - components  组件规则（语义类名 + data-* 状态）
+ *
+ * 刻意不含：全局元素重置（main.scss）、字体 @font-face、页面骨架（.horizon-*）、
+ * 导航与页脚 —— 那些是宿主的页面层，由宿主决定要不要加载。
+ *
+ * 换肤：宿主覆盖 --h-* 变量即可，不需要动构建链（也不引入 UnoCSS/Tailwind）。
+ * 零样式：改从 '@roidmc/horizon-ui/unstyled' 导入，或在 createHorizon({ unstyled: true }) 全局脱皮。
+ */
+@use "./themes/variables/abstracts" as h-tokens;
+@use "./themes/variables/components/ui" as h-component-tokens;
+@use "./themes/animation" as h-animation;
+@use "./themes/components/ui" as h-component-skins;

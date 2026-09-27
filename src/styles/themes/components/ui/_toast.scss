@@ -1,0 +1,420 @@
+/**
+ * Toast 通知组件样式（全局层）
+ * reka-ui 将 ToastViewport portal 到 <body>，故须全局；用原生 @scope 做隔离。
+ */
+
+// ── 退出动画公共关键帧 mixin ──
+// 退出时：opacity 渐变 + 整体 transform（位移 + 微缩） + 圆角收紧。
+// 不动 max-height/padding，避免 column 布局下 main 与 footer 不同步塌缩
+//（旧版 max-height: 0 方案的副作用）；整条一起 transform，main/footer 必然同步。
+// 高度收敛由 viewport 的 flex gap + DOM 卸载自然收掉。
+@mixin toast-collapsed {
+  opacity: 0;
+  border-radius: 0.2rem;
+}
+
+@mixin toast-expanded {
+  opacity: 1;
+  border-radius: 0.7rem;
+}
+
+// 方向动画：入/出 keyframes 仅方向不同，抽成 mixin 避免 4 段重复
+@mixin toast-dir($mod, $origin, $in, $out) {
+  :scope.h-toast--#{$mod} {
+    transform-origin: $origin;
+    animation: $in 0.42s var(--h-motion-ease-ios) both;
+
+    &.h-toast--exiting {
+      animation: $out 0.32s var(--h-motion-ease-in-out) forwards;
+    }
+  }
+}
+
+// ── 动画关键帧（全局，4 方向 + 旋转）──
+@keyframes h-toast-in-right {
+  from {
+    transform: translateX(100%) scale(0.98);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes h-toast-out-right {
+  from {
+    transform: translateX(0) scale(1);
+    @include toast-expanded;
+  }
+
+  to {
+    transform: translateX(30%) scale(0.98);
+    @include toast-collapsed;
+  }
+}
+
+// ⚠️ RTL 适配：toast 滑入方向跟随所在 viewport 角落的阅读侧（变量法，同 animation/index.scss）。
+// viewport 已用 inset-inline 逻辑镜像（--top-left 在 RTL 下渲染在右上），
+// 滑入方向须同步镜像才符合「从边缘外滑入」的叙事。
+:root {
+  --h-anim-toast-in-from: -100%;
+}
+
+[dir='rtl'] {
+  --h-anim-toast-in-from: 100%;
+}
+
+@keyframes h-toast-in-left {
+  from {
+    transform: translateX(var(--h-anim-toast-in-from)) scale(0.98);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes h-toast-out-left {
+  from {
+    transform: translateX(0) scale(1);
+    @include toast-expanded;
+  }
+
+  to {
+    transform: translateX(-30%) scale(0.98);
+    @include toast-collapsed;
+  }
+}
+
+@keyframes h-toast-in-top {
+  from {
+    transform: translateY(-115%) scale(0.98);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes h-toast-out-top {
+  from {
+    transform: translateY(0) scale(1);
+    @include toast-expanded;
+  }
+
+  to {
+    transform: translateY(-45%) scale(0.98);
+    @include toast-collapsed;
+  }
+}
+
+@keyframes h-toast-in-bottom {
+  from {
+    transform: translateY(115%) scale(0.98);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes h-toast-out-bottom {
+  from {
+    transform: translateY(0) scale(1);
+    @include toast-expanded;
+  }
+
+  to {
+    transform: translateY(45%) scale(0.98);
+    @include toast-collapsed;
+  }
+}
+
+// ── Viewport（位置容器，portal 到 body）──
+@scope (.h-toast-viewport) {
+  :scope {
+    position: fixed;
+    z-index: var(--h-z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    // 视口随内容宽度（不再写死 400px），下限 250px、上限 400px，卡片 width:100% 拉伸到视口宽
+    width: fit-content;
+    min-width: 250px;
+    max-width: min(400px, calc(100vw - 1.5rem));
+    max-height: 100dvh;
+    padding: 0;
+    list-style: none;
+    outline: none;
+    pointer-events: none;
+
+    // 位置切换时平滑过渡（不突兀跳转）
+    transition: top 0.35s var(--h-motion-ease-standard),
+      bottom 0.35s var(--h-motion-ease-standard),
+      left 0.35s var(--h-motion-ease-standard),
+      right 0.35s var(--h-motion-ease-standard),
+      transform 0.35s var(--h-motion-ease-standard);
+  }
+
+  // ⚠️ RTL 适配：类名中的 left/right 按「逻辑语义」处理——
+  // left = 阅读起始侧（inline-start），right = 阅读结束侧（inline-end）。
+  // LTR 下渲染与物理 left/right 完全一致；RTL 下自动镜像（--top-left 出现在右上）。
+  // center 位置用 left: 50% + translateX(-50%)，几何对称，dir 翻转无需处理。
+  :scope.h-toast-viewport--top-left {
+    top: var(--h-space-4);
+    inset-inline-start: var(--h-space-4);
+  }
+
+  :scope.h-toast-viewport--top-center {
+    top: var(--h-space-4);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  :scope.h-toast-viewport--top-right {
+    top: var(--h-space-4);
+    inset-inline-end: var(--h-space-4);
+  }
+
+  :scope.h-toast-viewport--bottom-left {
+    bottom: var(--h-space-4);
+    inset-inline-start: var(--h-space-4);
+  }
+
+  :scope.h-toast-viewport--bottom-center {
+    bottom: var(--h-space-4);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  :scope.h-toast-viewport--bottom-right {
+    bottom: var(--h-space-4);
+    inset-inline-end: var(--h-space-4);
+  }
+
+  // 顶部最新在下（正常流）；底部最新在下（column-reverse）
+  :scope.h-toast-viewport--top-left,
+  :scope.h-toast-viewport--top-center,
+  :scope.h-toast-viewport--top-right {
+    flex-direction: column;
+  }
+
+  :scope.h-toast-viewport--bottom-left,
+  :scope.h-toast-viewport--bottom-center,
+  :scope.h-toast-viewport--bottom-right {
+    flex-direction: column-reverse;
+  }
+}
+
+// ── Toast 卡片（Sonner 风格：紧凑条形、圆润、纯色区分类型）──
+@scope (.h-toast) {
+  :scope {
+    pointer-events: auto;
+    // 纵向分层：主区（icon + title/desc） + 底部 footer（action + close），
+    // 独立背景与分隔线让操作入口自成一档，不与主信息挤在一行。
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    padding: 0;
+    overflow: hidden; // 防止 footer 自带背景溢出圆角
+    font-family: var(--h-font-family);
+    font-size: var(--h-text-size-sm);
+    line-height: var(--h-line-height-snug);
+    color: var(--h-text);
+    border: none;
+    border-radius: 0.7rem;
+    // 类型/主题变化时的颜色过渡（与 animation 的位移/透明度互不影响）
+    box-shadow: var(--h-toast-shadow);
+    // 包含 opacity + border-radius：opacity 在 collapsed/expanded mixin 里 toggle，
+    // border-radius 同步收紧到 0.2rem，让整条 toast 在退出过程中圆角收拢与位移一起收。
+    transition: background-color 0.35s var(--h-motion-ease-ios),
+      color 0.35s var(--h-motion-ease-ios),
+      box-shadow 0.35s var(--h-motion-ease-ios),
+      opacity 0.32s var(--h-motion-ease-in-out),
+      border-radius 0.32s var(--h-motion-ease-in-out);
+  }
+
+  // 主区：icon + body 横向排列，沿用原 row 间距与 padding
+  .h-toast-main {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.72rem 0.85rem;
+  }
+
+  // ── 方向感知动画（按位置分派，iOS 单向减速缓动）──
+  @include toast-dir(at-top-right, right center, h-toast-in-right, h-toast-out-right);
+  @include toast-dir(at-bottom-right, right center, h-toast-in-right, h-toast-out-right);
+  @include toast-dir(at-top-left, left center, h-toast-in-left, h-toast-out-left);
+  @include toast-dir(at-bottom-left, left center, h-toast-in-left, h-toast-out-left);
+  @include toast-dir(at-top-center, top center, h-toast-in-top, h-toast-out-top);
+  @include toast-dir(at-bottom-center, bottom center, h-toast-in-bottom, h-toast-out-bottom);
+
+  // ── 类型纯色背景（不使用半透明）──
+  :scope.h-toast--default {
+    background: var(--h-toast-default-bg);
+  }
+
+  :scope.h-toast--success {
+    background: var(--h-toast-success-bg);
+    color: var(--h-toast-success-fg);
+  }
+
+  :scope.h-toast--error {
+    background: var(--h-toast-error-bg);
+    color: var(--h-toast-error-fg);
+  }
+
+  :scope.h-toast--warning {
+    background: var(--h-toast-warning-bg);
+    color: var(--h-toast-warning-fg);
+  }
+
+  :scope.h-toast--info {
+    background: var(--h-toast-info-bg);
+    color: var(--h-toast-info-fg);
+  }
+
+  :scope.h-toast--loading {
+    background: var(--h-toast-info-bg);
+    color: var(--h-toast-info-fg);
+  }
+
+  // ── 图标（颜色随类型切换，过渡平滑）──
+  .h-toast-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--h-icon-size-lg);
+    height: var(--h-icon-size-lg);
+    font-size: var(--h-icon-size-lg);
+    transition: color 0.35s var(--h-motion-ease-ios);
+
+    .h-toast--default & {
+      color: var(--h-toast-icon-default);
+    }
+
+    .h-toast--success & {
+      color: var(--h-toast-icon-success);
+    }
+
+    .h-toast--error & {
+      color: var(--h-toast-icon-error);
+    }
+
+    .h-toast--warning & {
+      color: var(--h-toast-icon-warning);
+    }
+
+    .h-toast--info &,
+    .h-toast--loading & {
+      color: var(--h-toast-icon-info);
+    }
+  }
+
+  .h-toast-spin {
+    animation: h-spin 0.85s linear infinite;
+  }
+
+  // ── 内容区 ──
+  .h-toast-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.08rem;
+  }
+
+  .h-toast-title {
+    font-weight: var(--h-font-weight-semibold);
+    color: inherit;
+    line-height: 1.35;
+  }
+
+  .h-toast-desc {
+    opacity: 0.8;
+    line-height: 1.38;
+    word-break: break-word;
+  }
+
+  // ── 底部 footer（操作行）：与主区分层 ──
+  .h-toast-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.45rem 0.85rem;
+    // 用 box-shadow 内阴影在顶边画"压暗一档"的细线 + footer 内圈轻微加深。
+    // 比 rgba(0,0,0,0.10) 半透明叠加更稳：后者在深色底（default）和浅色底
+    // （success/info）上对比度差太多，必须按类型维护。
+    // inset top 用深色（alpha 高），在两种底色上都能拉出清晰分隔。
+    border-top: 0;
+    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.22),
+      inset 0 -100px 60px -80px rgba(0, 0, 0, 0.18);
+  }
+
+  // 无 action 时 footer 只剩关闭按钮，space-between 会把它贴左。
+  // 改用 justify-content: flex-end 让 × 始终在右。
+  // 用 :empty 不行（关闭按钮还在），改用 v-if 控制 action 时只渲染 footer
+  // 元素本身在模板里两个条件共存，因此走属性选择器匹配「只有 close 一个子元素」的场景。
+  .h-toast-footer:has(> .h-toast-close:only-child) {
+    justify-content: flex-end;
+  }
+
+  // ── Action 按钮（文字链接感）──
+  .h-toast-action {
+    flex-shrink: 0;
+    padding: 0.22rem 0.55rem;
+    font-size: 0.825rem;
+    font-weight: var(--h-font-weight-semibold);
+    // 用 --h-primary 原色而非 --h-primary-strong：后者是
+    // color-mix(primary 65%, black)，本意为 hover/active 加深态，
+    // 压暗 35% 后在深色 type 背景（error/warning/default）上会发灰、对比度不足。
+    // 原色在浅色（success/info）与深色底上都保持可辨识。
+    color: var(--h-primary);
+    background: transparent;
+    border: none;
+    border-radius: 0.35rem;
+    cursor: pointer;
+    transition: background-color var(--h-motion-duration-fast) var(--h-motion-ease-standard);
+
+    &:hover {
+      background: var(--h-toast-action-hover);
+    }
+  }
+
+  // ── 关闭按钮 ──
+  .h-toast-close {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    padding: 0;
+    font-size: 1.1rem;
+    color: var(--h-text-tertiary);
+    background: transparent;
+    border: none;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: background-color var(--h-motion-duration-fast) var(--h-motion-ease-standard),
+      color var(--h-motion-duration-fast) var(--h-motion-ease-standard);
+
+    &:hover {
+      color: var(--h-text);
+      background: var(--h-toast-close-hover);
+    }
+  }
+}

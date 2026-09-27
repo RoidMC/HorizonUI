@@ -1,0 +1,42 @@
+@mixin vertical-text($text-color: white, $bracket-color: var(--h-primary)) {
+    position: absolute;
+    top: 0;
+    // ⚠️ RTL 适配：竖排装饰条贴「阅读结束侧」（LTR=右 / RTL=左），用逻辑属性自动镜像。
+    // 注意：inset-inline-end 的解析基于本元素的 direction——所以 direction: ltr
+    // 绝不能加在此处（会退化为物理 right、镜像失效），只能加在下层 span 上锁文字。
+    inset-inline-end: 0;
+    width: 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 1rem;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+
+    span {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        // ⚠️ RTL 适配：本 mixin 是品牌装饰（slogan/错误码竖排），内容恒为英文文案，
+        // [ ] 括号的位置与字形是设计稿的一部分，不应随 dir 翻转——
+        // 否则 vertical-rl 的行进方向会颠倒（开括号跑到底部）且 [ ] 作为 bidi
+        // 镜像字符会互换字形。在 span 层强制 LTR 行进锁定设计原貌，
+        // 容器层仍跟随 dir（保住 inset-inline-end 的定位镜像）。
+        direction: ltr;
+        font-size: clamp(0.75rem, 2vw, 1rem);
+        font-weight: bold;
+        letter-spacing: 0.5rem;
+
+        &.bracket {
+            color: $bracket-color;
+            padding-bottom: 0.2rem;
+        }
+
+        &.text {
+            color: $text-color;
+            padding: 0.5rem 0;
+        }
+    }
+}

@@ -1,0 +1,17 @@
+:root {
+    // Checkbox 局部令牌：默认值即「本项目的正确用法」，消费方按需覆盖尺寸/文案色
+    --h-checkbox-size: 1rem;
+    --h-checkbox-gap: 0.4rem;
+    --h-checkbox-bg: var(--h-surface-sunken);
+    --h-checkbox-bg-hover: var(--h-hover);
+    // 选中态默认**不改底色**（no-op = 与未选中同底），只让勾显形：
+    // 一填色，同一尺寸的方块在视觉上就会"变大变重"，两个状态看着像两种控件。
+    // 需要填充的消费方覆盖这个变量即可（例如 var(--h-surface-elevated)）。
+    --h-checkbox-bg-checked: var(--h-checkbox-bg);
+    --h-checkbox-border: var(--h-border);
+    --h-checkbox-tick: var(--h-primary);
+    --h-checkbox-tick-size: 0.7rem;
+    --h-checkbox-text-size: 0.8rem;
+    --h-checkbox-text-color: var(--h-text-secondary);
+    --h-checkbox-disabled-opacity: 0.5;
+}

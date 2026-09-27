@@ -1,0 +1,26 @@
+:root {
+    --h-button-width: auto;
+    --h-button-height: 2rem;
+    --h-button-padding: 0 1rem;
+    --h-button-font-size: var(--h-text-size-sm);
+    --h-button-border-radius: var(--h-border-radius-none);
+    --h-button-bg: var(--h-surface-elevated);
+    --h-button-text: var(--h-text);
+    --h-button-border: transparent;
+    --h-button-icon-gap: 0.3rem;
+    --h-button-icon-size: var(--h-icon-size-base);
+    --h-button-icon-color: currentColor;
+
+    --h-button-hover-bg: var(--h-surface-sunken);
+    --h-button-hover-text: var(--h-text);
+
+    --h-button-disabled-opacity: 0.5;
+    --h-button-active-opacity: 0.8;
+
+    // loading 圆环（纯 CSS，不依赖图标集）
+    --h-button-spinner-size: var(--h-icon-size-base);
+    --h-button-spinner-width: 2px;
+    --h-button-spinner-duration: 0.8s;
+
+    --h-button-transition: background-color 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
+}

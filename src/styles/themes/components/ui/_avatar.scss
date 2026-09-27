@@ -1,0 +1,13 @@
+// HorizonUI · Avatar 皮肤
+//
+// 原 .ui-avatar__img 与 .ui-avatar__placeholder-img 两条规则等价（都让图片填满容器），
+// 合并为同一条 .h-avatar-img。
+// （原 .ui-avatar__placeholder 规则是死代码：模板从未使用该 class，已删除。）
+
+.h-avatar-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}

@@ -1,0 +1,58 @@
+/**
+ * Horizon UI 调色盘预设
+ * 通过 data-palette 属性在 <html> 或任意祖先元素上切换主题。
+ *
+ * 用法：
+ *   document.documentElement.setAttribute('data-palette', 'ocean')
+ * 或在 Vue 中使用 usePalette().setPalette('ocean')
+ */
+
+/* Ocean - 海蓝主题 */
+[data-palette="ocean"] {
+    --h-palette-primary: oklch(77.329% 0.11941 251.335);
+    --h-palette-success: oklch(70.4% 0.14 182.503);
+    --h-palette-warning: oklch(82.8% 0.189 84.429);
+    --h-palette-error: oklch(71.2% 0.194 13.428);
+    --h-palette-info: oklch(70.7% 0.165 254.624);
+    --h-palette-neutral: oklch(55.4% 0.046 257.417);
+}
+
+/* Forest - 森绿主题 */
+[data-palette="forest"] {
+    --h-palette-primary: oklch(76.5% 0.177 163.223);
+    --h-palette-success: oklch(72.3% 0.219 149.579);
+    --h-palette-warning: oklch(82.8% 0.189 84.429);
+    --h-palette-error: oklch(70.4% 0.191 22.216);
+    --h-palette-info: oklch(77.7% 0.152 181.912);
+    --h-palette-neutral: oklch(58% 0.031 107.3);
+}
+
+/* Sunset - 暖橙主题 */
+[data-palette="sunset"] {
+    --h-palette-primary: oklch(83.7% 0.128 66.29);
+    --h-palette-success: oklch(76.8% 0.233 130.85);
+    --h-palette-warning: oklch(76.9% 0.188 70.08);
+    --h-palette-error: oklch(63.7% 0.237 25.331);
+    --h-palette-info: oklch(62.3% 0.214 259.815);
+    --h-palette-neutral: oklch(55.3% 0.013 58.071);
+}
+
+/* Violet - 紫罗兰主题 */
+[data-palette="violet"] {
+    --h-palette-primary: oklch(81.1% 0.111 293.571);
+    --h-palette-success: oklch(69.6% 0.17 162.48);
+    --h-palette-warning: oklch(82.8% 0.189 84.429);
+    --h-palette-error: oklch(71.2% 0.194 13.428);
+    --h-palette-info: oklch(70.7% 0.165 254.624);
+    --h-palette-neutral: oklch(54.2% 0.034 322.5);
+}
+
+/* Rose - 玫瑰主题 */
+[data-palette="rose"] {
+    --h-palette-primary: oklch(81% 0.117 11.638);
+    --h-palette-success: oklch(69.6% 0.17 162.48);
+    --h-palette-warning: oklch(82.8% 0.189 84.429);
+    --h-palette-error: oklch(63.7% 0.237 25.331);
+    --h-palette-info: oklch(70.7% 0.165 254.624);
+    --h-palette-neutral: oklch(55.3% 0.013 58.071);
+}

@@ -1,0 +1,42 @@
+:root {
+    /* PanelCard - 默认变体 */
+    --h-panel-card-width: 100%;
+    --h-panel-card-bg: var(--h-surface-bg-80);
+    --h-panel-card-backdrop-filter: blur(var(--h-common-blur-base));
+    --h-panel-card-border: 1px solid var(--h-border);
+    --h-panel-card-border-radius: var(--h-border-radius-sm);
+    --h-panel-card-shadow: 0 4px 12px var(--h-shadow);
+    --h-panel-card-hover-shadow: 0 10px 25px var(--h-shadow);
+    --h-panel-card-transition: all 0.2s ease;
+
+    /* 变体 - elevated */
+    --h-panel-card-elevated-shadow: 0 10px 25px var(--h-shadow);
+    --h-panel-card-elevated-hover-shadow: 0 14px 32px var(--h-shadow);
+
+    /* 变体 - outlined */
+    --h-panel-card-outlined-border: 1px solid var(--h-border-strong);
+    --h-panel-card-outlined-shadow: 0 2px 8px var(--h-shadow);
+    --h-panel-card-outlined-hover-shadow: 0 6px 16px var(--h-shadow);
+
+    /* Header */
+    --h-panel-card-header-padding: 0.5rem 0.8rem;
+
+    /* Title */
+    --h-panel-card-title-size: var(--h-text-size-md);
+    --h-panel-card-title-color: var(--h-text);
+
+    /* Icon */
+    --h-panel-card-icon-size: var(--h-icon-size-md);
+
+    /* Expand Icon */
+    --h-panel-card-expand-icon-size: var(--h-icon-size-sm);
+    --h-panel-card-expand-icon-color: var(--h-text-secondary);
+
+    /* Divider */
+    --h-panel-card-divider-bg: var(--h-border);
+
+    /* Body padding */
+    --h-panel-card-padding-sm: 0.75rem 1rem;
+    --h-panel-card-padding-md: 1.25rem 1.5rem;
+    --h-panel-card-padding-lg: 1.75rem 2rem;
+}

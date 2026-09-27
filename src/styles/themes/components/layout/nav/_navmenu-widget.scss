@@ -1,0 +1,444 @@
+@use "../../../mixins" as HorizonMixins;
+@use "./navmenu-mixins" as *;
+
+// 桌面端「展开态」选择器（含 always-expanded 变体）统一收口，消除多处重复长选择器。
+$desktop-expanded: ".horizon-nav-desktop.expanded, .horizon-nav-desktop.always-expanded";
+
+// ============ Widget 尺寸 token（SCSS 编译期局部变量） ============
+// 改一处即可联动按钮尺寸、pill 收起/展开宽高、第二个按钮偏移。
+$widget-btn-size: 1.75rem; // 按钮固定正方形边长
+$widget-pad: 0.25rem; // pill 内边距
+$widget-gap: var(--h-nav-widget-spacing); // 按钮间距（0.25rem，来自主题变量）
+// 操作按钮数量：改为运行时 CSS 变量（由 WidgetActions 按实际按钮数注入），
+// 收起态 = min(total, CORE+1)，展开态 = total。默认 4 仅作兜底。
+// 原因：Sass 编译期常量无法感知 DOM 实际按钮数，写死会导致 ≤3 个按钮时空出一段。
+$widget-btn-count: var(--widget-btn-count, 4);
+
+// 派生尺寸：收回态（纵向）尺寸
+$widget-col-width: calc(#{$widget-btn-size} + 2 * #{$widget-pad}); // 纵向：宽=单按钮 + 左右 padding（固定）
+// 纵向高度完全由运行时变量驱动：N 按钮 + (N-1) gap + 上下 padding
+$widget-col-height: calc(#{$widget-btn-count} * #{$widget-btn-size} + (#{$widget-btn-count} - 1) * #{$widget-gap} + 2 * #{$widget-pad});
+
+// 相邻按钮位移（按钮尺寸 + 间距），单一来源；TS 的 slotTransform 通过 var(--h-nav-widget-btn-offset) 引用，
+// 避免在脚本里重复硬编码 calc，防止与样式 token 漂移。
+:root {
+    --h-nav-widget-btn-offset: calc(#{$widget-btn-size} + #{$widget-gap});
+}
+
+// ==================== 11. Widget 容器 ====================
+.horizon-widget {
+    &-container {
+        // 基础 slot 容器：仅保留 flex 布局，视觉/间距交给内部 section
+        display: flex;
+        flex-direction: column;
+        gap: var(--h-nav-widget-spacing);
+        margin: 0.4rem;
+    }
+
+    // 各功能块（avatar / 操作按钮）的独立分区，作为 widget-container 的子项
+    &-section {
+        display: flex;
+        align-items: stretch;
+        gap: var(--h-nav-widget-spacing);
+
+        // 操作按钮分区：与 UPC Avatar 展开态 pill 同风格，8px 圆角。
+        // 按钮绝对定位，靠 transform 在纵向/横向之间平滑滑动（flex-direction 不可动画）。
+        &--actions {
+            position: relative;
+            box-sizing: border-box;
+            // 收回态按钮数兜底；实际由 WidgetActions 按 min(total,CORE+1) 注入
+            --widget-btn-count: 4;
+
+            // 装饰文字：与 UPC Avatar 同绝对定位，固定在右下角（展开态显示）
+            // （position/right/bottom/transform 等桌面专属定位已收进 .horizon-nav-desktop 作用域）
+            .horizon-widget__actions-decor {
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+                pointer-events: none;
+                user-select: none;
+                -webkit-user-select: none;
+                white-space: nowrap;
+                overflow: hidden;
+                max-width: 0;
+                opacity: 0;
+                transition:
+                    max-width 0.35s var(--h-nav-transition-timing),
+                    opacity 0.25s ease 0.05s,
+                    transform 0.25s ease 0.05s;
+
+                &-slash {
+                    font-size: 0.875rem;
+                    font-weight: 900;
+                    color: var(--h-upc-decor-slash);
+                }
+
+                &-text {
+                    font-size: 0.875rem;
+                    font-weight: 900;
+                    color: var(--h-upc-decor-text);
+                    letter-spacing: 0.125em;
+                    text-transform: uppercase;
+                }
+
+                // 展开态：装饰文字钉死右下角并淡入（收起态 max-width:0 + opacity:0 隐藏）
+                // 注意：必须用 @at-root 嵌套写法，不能用 `#{$desktop-expanded} &`——
+                // 后者是逗号分隔选择器列表，& 只会附加到最后一项，导致 .expanded（hover）
+                // 分支丢失 deco 限定，只有 .always-expanded（手动）命中。
+                @at-root #{$desktop-expanded} {
+                    .horizon-widget-section--actions .horizon-widget__actions-decor {
+                        bottom: 0rem;
+                        max-width: 10rem;
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+            }
+        }
+    }
+
+    // ============ 桌面专属布局收口：仅 .horizon-nav-desktop 作用域内生效 ============
+    // 这些属性原本写在裸 base selector 上，导致移动端复用同一套 class 时
+    // 被迫逐个覆盖（height / flex-direction / border-radius / position 等 hack）。
+    // 收进桌面作用域后，移动端自然拿到中性默认，上述覆盖全部可删。
+    @at-root .horizon-nav-desktop {
+        .horizon-widget-section {
+            flex-direction: column;
+        }
+
+        .horizon-widget-section--actions {
+            align-self: center;
+            width: $widget-col-width;
+            height: $widget-col-height;
+            background: var(--h-nav-widget-actions-bg);
+            border-radius: 0.5rem; // 8px
+            @include widget-shadow(true); // 带青色辉光
+            padding: $widget-pad;
+            transition:
+                width 0.4s var(--h-nav-transition-timing),
+                height 0.4s var(--h-nav-transition-timing);
+        }
+
+        .horizon-widget__actions-decor {
+            position: absolute;
+            inset-inline-end: 0.5rem;
+            bottom: -0.25rem;
+            // ⚠️ RTL 适配：收起态向「阅读结束方向」滑出，dir 翻转时位移取反
+            transform: translateX(0.5rem);
+
+            [dir='rtl'] & {
+                transform: translateX(-0.5rem);
+            }
+        }
+
+        // 按钮绝对定位 + transform 滑动（移动端不需要）
+        .horizon-widget-button {
+            position: absolute;
+            top: $widget-pad;
+            inset-inline-start: $widget-pad;
+            border-radius: 3px;
+        }
+
+        // 展开态轮播：取消绝对定位，回归 flex 流（须置于 .horizon-widget-button 之后，靠源序胜出）
+        .horizon-widget-button--paged {
+            position: static;
+            top: auto;
+            left: auto;
+            transform: none;
+            flex: 0 0 auto;
+        }
+    }
+
+    // 操作按钮区：默认收回状态立起来(纵向堆叠)，导航展开时横排。
+    // 靠 transform 平移第二个按钮实现平滑切换，容器尺寸同时过渡。
+    @at-root #{$desktop-expanded} {
+        .horizon-widget-section--actions {
+            // 展开态：改为「分页轮播 + 小点」纵向排列，占满 widget 区宽度
+            width: 100%;
+            max-width: none;
+            height: auto;
+            flex-direction: column;
+            align-items: stretch;
+
+            // 展开态用轮播展示全部按钮，「更多」不再需要
+            .horizon-widget-button--more {
+                display: none;
+            }
+        }
+    }
+
+    &-button {
+        color: var(--h-nav-background-color-white);
+        box-sizing: border-box;
+        font-size: 1.2rem;
+        width: $widget-btn-size;
+        height: $widget-btn-size;
+        min-width: $widget-btn-size;
+        min-height: $widget-btn-size;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        padding: $widget-pad;
+        transition: transform 0.4s var(--h-nav-transition-timing),
+            opacity 0.4s var(--h-nav-transition-timing),
+            background-color 0.4s var(--h-nav-transition-timing),
+            filter 0.1s var(--h-nav-transition-timing);
+        cursor: pointer;
+        flex-shrink: 0;
+        will-change: transform, opacity, background-color;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+
+        // 收回态（纵向）/ 展开态（横向）的具体定位改由 WidgetActions 内联 transform 注入，
+        // 以便「更多」按钮与动态数量下不依赖 nth-child，避免索引错位。
+
+        // 收起态中被收纳进「更多」的按钮：隐藏不占位（高度由 --widget-btn-count 控制）
+        &--collapsed-hidden {
+            display: none;
+        }
+
+        .widget-icon-inner {
+            color: var(--h-nav-background-color-white);
+        }
+
+        .widget-icon-container {
+            width: 1.2rem;
+            height: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .widget-icon-enter-active,
+        .widget-icon-leave-active {
+            transition: all 0.3s var(--h-nav-transition-timing);
+        }
+
+        .widget-icon-enter-from {
+            opacity: 0;
+            transform: scale(0.8) rotate(180deg);
+        }
+
+        .widget-icon-leave-to {
+            opacity: 0;
+            transform: scale(1.2) rotate(-180deg);
+        }
+
+        // Hover 效果：禁止放大/上移/重置 translate，避免纵向布局的第二个按钮 hover 后跳回顶部与第一个重叠
+        &:hover {
+            background-color: var(--h-nav-hover-color-white-rgba);
+            box-shadow: 0 0 0 var(--h-widget-hover-ring-width) var(--h-widget-hover-ring-color);
+        }
+
+        // Active 效果：只用 brightness，不改 transform，防止按钮位置被覆盖
+        &:active {
+            filter: brightness(0.8);
+        }
+    }
+
+    // ==================== 展开态分页轮播（类手机桌面） ====================
+    &-carousel {
+        display: flex;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        @include HorizonMixins.hide-scrollbar;
+        user-select: none;
+        touch-action: pan-y;
+
+        // 多页时才可拖拽：显示 grab 光标（仅 1 页时不该出现拖拽指针）
+        &.can-drag {
+            cursor: grab;
+
+            &.dragging {
+                cursor: grabbing;
+            }
+        }
+
+        // 跟手拖动时由 JS 临时置 scroll-snap-type:none（通过内联 style 覆盖），
+        // 这里仅定义启用吸附时的平滑过场（消除翻页胶囊闪烁）
+        &.page-transition {
+            scroll-behavior: smooth;
+        }
+    }
+
+    &-page {
+        flex: 0 0 100%;
+        min-width: 100%;
+        scroll-snap-align: start;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--h-nav-widget-spacing);
+        // 纵向留白：给按钮 hover 光环留空间，避免被 carousel 的 overflow-y:hidden 裁掉。
+        // 留白绑定 --h-widget-hover-ring-width，改光环粗细时自动联动（单一真相源）。
+        padding: calc(var(--h-widget-hover-ring-width) + 1px) 0;
+    }
+
+    // 分页指示小点
+    &-dots {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+    &-dot {
+        width: 0.2rem;
+        height: 0.2rem;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background: var(--h-nav-hover-color-white-rgba);
+        cursor: pointer;
+        transition:
+            width 0.25s var(--h-nav-transition-timing),
+            border-radius 0.25s var(--h-nav-transition-timing),
+            background-color 0.25s var(--h-nav-transition-timing);
+
+        &.active {
+            width: 0.4rem;
+            border-radius: 0.15rem;
+            background: var(--h-nav-background-color-white);
+        }
+    }
+
+    &-avatar {
+        padding: 0;
+        overflow: visible;
+        border-radius: 0;
+        width: auto;
+        height: auto;
+        min-width: auto;
+        min-height: auto;
+        background-color: transparent;
+        box-shadow: none;
+        transition: none;
+
+        // UserAvatarCard 自带 hover 展开胶囊交互，禁用 widget-button 的放大/上移
+        &:hover {
+            background-color: transparent;
+            transform: none;
+            box-shadow: none;
+        }
+
+        &:active {
+            transform: none;
+            filter: none;
+        }
+
+        .ui-avatar {
+            width: 100%;
+            height: 100%;
+        }
+
+        .ui-avatar__img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    }
+}
+
+// ==================== UserAvatarCard Popup（全局） ====================
+// 经 reka-ui portal teleport 到 <body>，脱离组件 scoped 作用域，必须放全局，
+// 否则 data-state 动画与 is-opening 命中不了（scoped 的 data-v-* 选择器选不到 body 下的元素）。
+.user-avatar-card__popup {
+    background: transparent;
+    border: none;
+    padding: 0;
+    outline: none;
+    // 【唯一 portal 到 body 的 nav 浮层】必须显式 z-index，归属 nav 体系：nav + 1 = 401。
+    // .horizon-navContainer 是 position:sticky + z-index:var(--h-z-nav)(400)，已建立
+    // stacking context——h5menu(500)/menubar(501) 都是 nav 内部的局部值，整棵 nav 子树
+    // 在 body 层就是 400。故 UPC 恒定 401 即可盖住整棵 nav（含移动端 menubar），
+    // 无需按桌面/移动分支、无需 drawer 变量。
+    // 且天然低于 backdrop(600)/modal(700)/popover(800)，通知/语言/模态等显式弹窗能盖住它。
+    // ⚠️ 切勿改用 --h-z-popover(800)：portal 后那是真全局值，会盖住全部模态。
+    z-index: calc(var(--h-z-nav) + 1);
+
+    // 打开瞬间抑制内部指针事件，避免自动弹出 tooltip（用户主动 hover/点击后才触发）
+    //
+    // ⚠️ 必须限定 @media(hover:hover)：该抑制是为「鼠标恰好停在内容上、导致内部
+    // HoverCard 自动弹出」而设，触摸端没有这个场景。且组件里解除抑制依赖
+    // pointermove（或最迟 1s 超时），而触摸 tap 不产生 pointermove——
+    // 结果 pointer-events:none 会持续到超时，期间点击穿透 popup 落到下层元素，
+    // 被 reka-ui dismissable layer 判定为「点击外部」→ UPC 被关闭（桌面因有
+    // pointermove 提前解除，故不复现）。触摸端直接不抑制即可。
+    @media (hover: hover) {
+        &.is-opening {
+            pointer-events: none;
+        }
+    }
+
+    @include pop-state;
+
+    // side="top"/"bottom" 弹出（如移动端 menubar 头像卡传 side="bottom"）时动画改垂直方向。
+    // data-side 是 reka-ui 碰撞规避后的最终方向，动画方向始终与实际弹出侧一致：
+    // top → popup 在触发器上方 → 从下滑入/向下滑出；bottom → 在下方 → 从上滑入/向上滑出。
+    // 两者方向相反，不能共用一套（此前 bottom 误用 top 的动画，出现方向反了）。
+    &[data-side='top'] {
+        @include pop-state-vertical('up');
+    }
+
+    &[data-side='bottom'] {
+        @include pop-state-vertical('down');
+    }
+}
+
+// ==================== Widget Actions「更多」弹出菜单（全局） ====================
+// 经 reka-ui PopoverContent portal 到 <body>，脱离组件 scoped 作用域，必须放全局，
+// 否则 scoped 的 data-v-* 选不中 body 下的元素。
+.horizon-widget__more-popup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: var(--h-nav-widget-actions-bg);
+    border-radius: 0.5rem;
+    @include widget-shadow; // 无辉光
+    // 本组件无 portal，内联渲染在 nav 内。nav 容器自带 z-index(--h-z-nav) 已建立
+    // stacking context，故此处的 --h-z-popover(800) 仅在 nav 内部生效、不参与全局竞争，
+    // 不会盖住 backdrop(600)/modal(700)。与 portal 化的 .user-avatar-card__popup 不同，
+    // 后者是真全局值、必须归属 nav 档——两者不可套用同一写法。
+    z-index: var(--h-z-popover);
+
+    @include pop-state;
+}
+
+.horizon-widget__more-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.35rem;
+    color: var(--h-nav-background-color-white);
+    white-space: nowrap;
+    cursor: pointer;
+    font-size: 0.8rem;
+
+    &:hover {
+        background-color: var(--h-nav-hover-color-white-rgba);
+    }
+}
+
+// 移动端"更多"弹窗：从底部向上弹出，菜单项使用主题文字色
+.horizon-widget__more-popup--mobile {
+    max-width: calc(100vw - 2rem);
+    min-width: 8rem;
+
+    // 覆盖父级水平动画，改为垂直方向（side="top" 向上弹出）
+    @include pop-state-vertical;
+
+    .horizon-widget__more-item {
+        // hover 背景继承基础 .horizon-widget__more-item:hover，无需重复
+        color: var(--h-text);
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+

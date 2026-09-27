@@ -1,0 +1,19 @@
+# dev/build outputs
+.output
+dist
+
+# Edgeone outputs
+.edgeone
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+**temp

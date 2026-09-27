@@ -1,0 +1,146 @@
+@use "../../../mixins" as HorizonMixins;
+@use "./navmenu-mixins" as *;
+
+// ==================== 6. 桌面端导航 ====================
+.horizon-nav-desktop {
+    width: var(--h-nav-desktop-min-width);
+    background: var(--h-nav-desktop-background-color);
+    @include HorizonMixins.viewport-viewport-property(height, 100);
+    position: fixed;
+    inset-inline-start: 0;
+    top: 0;
+    z-index: var(--h-z-nav);
+    transition: width var(--h-nav-desktop-expand-duration) var(--h-nav-transition-timing);
+    //overflow: hidden;
+
+    &.expanded {
+        width: var(--h-nav-desktop-max-width);
+    }
+
+    @include nav-endless-mask;
+
+    >div {
+        position: relative;
+        z-index: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: padding var(--h-nav-desktop-expand-duration) var(--h-nav-transition-timing);
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+// ==================== 7. 导航内容布局 ====================
+.horizon-nav__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 0;
+}
+
+.horizon-nav__items {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-inline-start: 0.4rem;
+    //margin-right: 0.4rem;
+    gap: 0.5rem;
+    overflow-y: auto;
+    min-height: 0;
+    @include HorizonMixins.hide-scrollbar;
+}
+
+.horizon-nav__widgets {
+    max-height: max-content;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-end;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    @include HorizonMixins.hide-scrollbar;
+    transition: transform var(--h-nav-desktop-expand-duration) var(--h-nav-transition-timing);
+
+    .horizon-nav-desktop.expanded & {
+        transition-delay: var(--h-nav-desktop-widgets-delay);
+    }
+}
+
+// ==================== 8. Logo ====================
+@mixin horizon-nav-logo-base {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.horizon-navLogo {
+    @include horizon-nav-logo-base;
+
+    &-desktop {
+        @include horizon-nav-logo-base;
+        margin: 0.5rem 0.25rem;
+        height: var(--h-nav-desktop-logo-size);
+    }
+
+    &-mobile {
+        @include horizon-nav-logo-base;
+        width: var(--h-nav-mobile-logo-size);
+    }
+
+    &-img {
+        height: auto;
+        width: auto;
+        max-height: 100%;
+        max-width: 100%;
+        min-width: 1rem;
+        min-height: 1rem;
+        display: block;
+        object-fit: contain;
+    }
+}
+
+// ==================== 9. 导航区块 ====================
+@mixin horizon-nav-section-base {
+    display: flex;
+}
+
+.horizon-navSection {
+    @include horizon-nav-section-base;
+
+    &-desktop {
+        @include horizon-nav-section-base;
+        @include HorizonMixins.viewport-viewport-property(height, 100);
+        flex-direction: column;
+    }
+}
+
+// ==================== 10. 导航工具栏 ====================
+.horizon-navUtils {
+    &-desktop {
+        &-scaleSwitcher {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--h-nav-background-color);
+            max-height: 2rem;
+            border: none;
+            padding: 0.5rem 0.1rem;
+            transition: transform 0.4s var(--h-nav-transition-timing);
+            @include nav-contour-overlay(0.2, 0);
+
+            &:hover {
+                background-color: var(--h-surface-bg-95);
+                transition: background-color 0.5s var(--h-nav-transition-timing);
+            }
+
+            &-icon {
+                color: var(--h-nav-background-color-white);
+                font-size: var(--h-icon-size-xl);
+            }
+        }
+    }
+}

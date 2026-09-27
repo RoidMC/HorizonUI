@@ -1,0 +1,20 @@
+// HorizonUI · Divider 皮肤
+//
+// 组件侧只输出语义类名（见 components/UI/Divider.vue），视觉全在这里；
+// 线条色 / 粗细 / 间距等仍可由 prop 经内联 style 覆盖，令牌走 --h-divider-*。
+// unstyled 时组件不挂这些类名，本文件自然失效，无需额外开关。
+
+.h-divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  &-line {
+    flex: 1;
+    min-width: var(--h-divider-line-min-width);
+  }
+
+  &-text {
+    white-space: nowrap;
+  }
+}

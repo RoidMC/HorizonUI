@@ -1,0 +1,41 @@
+:root {
+    /* Toast 类型色：bg=种子混白(浅底)，fg/icon=种子混黑(深字)；暗色段对称互换混黑/混白 */
+    --h-toast-default-bg: var(--h-surface-bg-95);
+
+    --h-toast-success-bg: color-mix(in oklch, var(--h-palette-success) 30%, white);
+    --h-toast-success-fg: color-mix(in oklch, var(--h-palette-success) 35%, black);
+    --h-toast-error-bg: color-mix(in oklch, var(--h-palette-error) 30%, white);
+    --h-toast-error-fg: color-mix(in oklch, var(--h-palette-error) 35%, black);
+    --h-toast-warning-bg: color-mix(in oklch, var(--h-palette-warning) 30%, white);
+    --h-toast-warning-fg: color-mix(in oklch, var(--h-palette-warning) 35%, black);
+    --h-toast-info-bg: color-mix(in oklch, var(--h-palette-info) 30%, white);
+    --h-toast-info-fg: color-mix(in oklch, var(--h-palette-info) 35%, black);
+
+    --h-toast-icon-default: var(--h-text-secondary);
+    --h-toast-icon-success: color-mix(in oklch, var(--h-palette-success) 22%, black);
+    --h-toast-icon-error: color-mix(in oklch, var(--h-palette-error) 22%, black);
+    --h-toast-icon-warning: color-mix(in oklch, var(--h-palette-warning) 22%, black);
+    --h-toast-icon-info: color-mix(in oklch, var(--h-palette-info) 22%, black);
+
+    --h-toast-shadow: var(--h-shadow-base);
+    --h-toast-action-hover: var(--h-hover);
+    --h-toast-close-hover: var(--h-hover-strong);
+}
+
+:root.dark {
+    /* 暗色对称：bg=种子混黑(深底留色相)，fg/icon=种子混白(亮字) */
+    --h-toast-success-bg: color-mix(in oklch, var(--h-palette-success) 50%, black);
+    --h-toast-success-fg: color-mix(in oklch, var(--h-palette-success) 55%, white);
+    --h-toast-error-bg: color-mix(in oklch, var(--h-palette-error) 50%, black);
+    --h-toast-error-fg: color-mix(in oklch, var(--h-palette-error) 55%, white);
+    --h-toast-warning-bg: color-mix(in oklch, var(--h-palette-warning) 50%, black);
+    --h-toast-warning-fg: color-mix(in oklch, var(--h-palette-warning) 55%, white);
+    --h-toast-info-bg: color-mix(in oklch, var(--h-palette-info) 50%, black);
+    --h-toast-info-fg: color-mix(in oklch, var(--h-palette-info) 55%, white);
+
+    --h-toast-icon-success: color-mix(in oklch, var(--h-palette-success) 55%, white);
+    --h-toast-icon-error: color-mix(in oklch, var(--h-palette-error) 55%, white);
+    --h-toast-icon-warning: color-mix(in oklch, var(--h-palette-warning) 55%, white);
+    --h-toast-icon-info: color-mix(in oklch, var(--h-palette-info) 55%, white);
+
+  }

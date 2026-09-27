@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "jsx": "preserve",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "verbatimModuleSyntax": true,
+    "types": []
+  },
+  // 只从两个入口出发做类型检查（TS 会顺着 import 把可达文件全部纳入）。
+  // 这样「没被入口导出的组件」不会拖累检查 —— 也从反面保证了导出面 = 检查面：
+  // 组件一旦从 components/UI/index.ts 导出，就必须先自证不依赖 Nuxt 自动导入。
+  "include": ["src/index.ts", "src/unstyled.ts", "src/shims.d.ts"]
+}

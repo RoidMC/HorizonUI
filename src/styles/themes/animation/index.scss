@@ -1,0 +1,301 @@
+/**
+ * Horizon Animation
+ * 通用动画库：keyframes + Vue Transition 类
+ *
+ * @author  RoidMC
+ * @link    https://www.roidmc.com/
+ * @since   1.0.0
+ *
+ * @version 1.0.0
+ */
+
+// ==================== Keyframes ====================
+
+// 遮罩淡入
+@keyframes h-overlay-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+// 遮罩淡出
+@keyframes h-overlay-fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+// 弹窗缩放入（居中定位）
+@keyframes h-dialog-scale-in {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+// 弹窗缩放出（居中定位）
+@keyframes h-dialog-scale-out {
+    from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    to { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+}
+
+// 弹窗缩放入（普通定位）
+@keyframes h-scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+// 弹窗缩放出（普通定位）
+@keyframes h-scale-out {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.95); }
+}
+
+// 淡入
+@keyframes h-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+// 淡出
+@keyframes h-fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+// 旋转（loading）
+@keyframes h-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+// 流动高光（进度条 / 光泽扫过）：从左移到右
+// ⚠️ RTL 不镜像：-100%→100% 是「贯穿扫过」效果，无方向叙事，两侧观感一致
+@keyframes h-shimmer {
+    0% { transform: translateX(-100%); }
+    60%, 100% { transform: translateX(100%); }
+}
+
+// 入场上浮（内容淡入 + 上移）
+@keyframes h-rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+// ⚠️ RTL 适配（keyframes 无法按 dir 条件化，改用变量法）：
+// 方向性入场动画的位移抽成自定义属性，keyframes 内 var() 按引用元素解析，
+// 继承自下方的 :root（LTR 默认）/[dir='rtl']（镜像）声明，所有使用方零改动自动生效。
+:root {
+    --h-anim-popup-from: -20px;   // Popup 滑入起点（LTR=从左）
+    --h-anim-pop-from: -0.5rem;   // 轻缩放弹出起点（LTR=从左）
+}
+
+[dir='rtl'] {
+    --h-anim-popup-from: 20px;    // RTL=从右
+    --h-anim-pop-from: 0.5rem;
+}
+
+// 导航 Popup 横向滑入（从阅读起始侧滑入）
+@keyframes h-popup-slide-in {
+    from { opacity: 0; transform: translateX(var(--h-anim-popup-from)); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+// 导航 Popup 横向滑出（向阅读起始侧滑出）
+@keyframes h-popup-slide-out {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(var(--h-anim-popup-from)); }
+}
+
+// 弹窗/卡片从阅读起始侧轻缩放淡入（带 0.96 缩放，用于 UserAvatarCard / Widget「更多」弹出）
+@keyframes h-pop-in-left {
+    from { opacity: 0; transform: translateX(var(--h-anim-pop-from)) scale(0.96); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+// 弹窗/卡片向阅读起始侧轻缩放淡出
+@keyframes h-pop-out-left {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to { opacity: 0; transform: translateX(var(--h-anim-pop-from)) scale(0.96); }
+}
+
+// 弹窗/卡片从下方轻缩放淡入（用于 side="top" 的弹出菜单，如移动端「更多」）
+@keyframes h-pop-in-up {
+    from { opacity: 0; transform: translateY(0.5rem) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// 弹窗/卡片向下方轻缩放淡出
+@keyframes h-pop-out-down {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(0.5rem) scale(0.96); }
+}
+
+// 弹窗/卡片从上方轻缩放淡入（用于 side="bottom" 的弹出，如移动端 menubar 头像卡——
+// popup 位于触发器下方，出现时应从触发器方向（上方）滑入）
+@keyframes h-pop-in-down {
+    from { opacity: 0; transform: translateY(-0.5rem) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// 弹窗/卡片向上方轻缩放淡出（side="bottom" 的收回方向：缩回触发器）
+@keyframes h-pop-out-up {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(-0.5rem) scale(0.96); }
+}
+
+// 导航菜单文字横向浮现
+@keyframes h-text-appear {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+// 流体渐变（背景位置循环流动，用于错误页等流体渐变背景）
+@keyframes h-fluid {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
+    100% { background-position: 0% 50%; }
+}
+
+// ==================== Vue Transition Classes ====================
+
+// 淡入淡出
+.h-fade-enter-active,
+.h-fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.h-fade-enter-from,
+.h-fade-leave-to {
+    opacity: 0;
+}
+
+// 纵向滑动（列表/内容切换）
+.h-slide-y-enter-active,
+.h-slide-y-leave-active {
+    transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.h-slide-y-leave-active {
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+    width: 100%;
+    z-index: 0;
+}
+
+.h-slide-y-enter-from {
+    opacity: 0;
+    transform: translateY(12px);
+}
+
+.h-slide-y-leave-to {
+    opacity: 0;
+    transform: translateY(-12px);
+}
+
+// 横向滑动（视图切换：列表 ↔ 详情）
+.h-slide-x-enter-active,
+.h-slide-x-leave-active {
+    transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+// ⚠️ RTL 适配说明：slide-x 是「跟随阅读方向」的水平切换动画。
+// 物理属性 translateX 不随 dir 翻转，故用 [dir='rtl'] 显式镜像位移方向，
+// 使 LTR 下「新内容从右滑入」的叙事在 RTL 下变为「从左滑入」，符合阿拉伯语用户的阅读预期。
+.h-slide-x-enter-from {
+    opacity: 0;
+    transform: translateX(12px);
+}
+
+.h-slide-x-leave-to {
+    opacity: 0;
+    transform: translateX(-12px);
+}
+
+[dir='rtl'] .h-slide-x-enter-from {
+    transform: translateX(-12px);
+}
+
+[dir='rtl'] .h-slide-x-leave-to {
+    transform: translateX(12px);
+}
+
+// 弹窗遮罩淡入淡出（Vue Transition）
+.h-overlay-enter-active,
+.h-overlay-leave-active {
+    transition: opacity 0.2s ease-out;
+}
+
+.h-overlay-enter-from,
+.h-overlay-leave-to {
+    opacity: 0;
+}
+
+// 弹窗内容缩放（Vue Transition，配合 fixed + translate(-50%, -50%) 使用）
+.h-dialog-enter-active {
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.h-dialog-leave-active {
+    transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+}
+
+.h-dialog-enter-from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+.h-dialog-leave-to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+// 弹窗内容缩放（Vue Transition，普通定位）
+.h-scale-in-enter-active {
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.h-scale-in-leave-active {
+    transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+}
+
+.h-scale-in-enter-from {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.h-scale-in-leave-to {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+// 从上滑入（下拉菜单等）
+.h-slide-down-enter-active,
+.h-slide-down-leave-active {
+    transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.h-slide-down-enter-from {
+    opacity: 0;
+    transform: translateY(-8px);
+}
+
+.h-slide-down-leave-to {
+    opacity: 0;
+    transform: translateY(-8px);
+}
+
+// 从下滑入（toast、snackbar 等）
+.h-slide-up-enter-active,
+.h-slide-up-leave-active {
+    transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.h-slide-up-enter-from {
+    opacity: 0;
+    transform: translateY(8px);
+}
+
+.h-slide-up-leave-to {
+    opacity: 0;
+    transform: translateY(8px);
+}

@@ -1,0 +1,26 @@
+:root {
+    --h-input-wrapper-width: 100%;
+    --h-input-label-gap: 6px;
+    --h-input-label-font-size: var(--h-text-size-sm);
+    --h-input-label-color: var(--h-text-secondary);
+
+    --h-input-width: 100%;
+    --h-input-height: 2rem;
+    --h-input-border-radius: var(--h-border-radius-none);
+    --h-input-bg: var(--h-surface-bg-80);
+    --h-input-border: var(--h-border);
+    --h-input-focus-border: var(--h-text);
+    --h-input-transition: border-color 0.2s;
+
+    --h-input-icon-size: var(--h-icon-size-base);
+    --h-input-icon-color: var(--h-text-secondary);
+    --h-input-icon-gap: 8px;
+    --h-input-prefix-opacity: 1;
+    --h-input-suffix-opacity: 1;
+
+    --h-input-padding: 0 0.5rem;
+    --h-input-font-size: var(--h-text-size-sm);
+    --h-input-text: var(--h-text);
+    --h-input-placeholder-color: var(--h-text-secondary);
+    --h-input-disabled-opacity: 0.5;
+}

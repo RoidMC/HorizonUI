@@ -1,0 +1,60 @@
+// HorizonUI · AutoSize 皮肤
+//
+// 尺寸过渡由 JS 钩子（useAnimatedSize）负责，这里只管容器的静态约束与内容淡入淡出。
+// 过渡类前缀 h-auto-size-fade-* 必须与组件里 <Transition name> 一致。
+
+// 容器：纯壳。宽高 / overflow 由 useAnimatedSize 的钩子在动画期间内联设置，
+// 这里**不要**写 transition（时长由 JS 统一给），否则会和内联样式打架。
+// position: relative = 给「离场元素绝对定位」当包含块；
+// min-height: 0 = 允许锁定的内联高度小于内容高度（否则收起动画会被内容顶住缩不下去）。
+// ⚠️ 不写 flex-shrink: 0 —— 那是调用方的事（AuthPanel 里要保证不被压矮；
+//    弹窗里反而需要能收缩，配合 max-height 滚动）。
+.h-auto-size {
+  position: relative;
+  min-height: 0;
+}
+
+.h-auto-size-inner {
+  min-width: 0;
+}
+
+// ── 淡入淡出（尺寸过渡由 JS 钩子做）────────────────────────
+// 两条节奏刻意不对称（iOS 的交叉淡入也是"旧的先走"）：
+//   离场 0.14s 无延迟：旧内容赶紧让位，别和新内容糊在一起
+//   进场 0.3s + 0.05s 延迟：新内容稍等一拍再进
+// ⚠️ 进场「时长 + 延迟（350ms）」必须**大于** JS 的 duration（320ms）：
+//    Vue 按进场时长决定 afterEnter 时机，早于容器变形结束会在最后一小段弹一下。
+.h-auto-size-fade-enter-active {
+  transition: opacity 0.3s var(--h-motion-ease-ios) 0.05s, transform 0.3s var(--h-motion-ease-ios) 0.05s;
+}
+
+// 离场元素脱流（交叉淡出的关键）：它不再参与容器高度计算，于是高度只有「旧 → 新」
+// 一次连续过渡，而不是先把旧内容淡出（高度僵住）再开始变高。
+// 同时吃掉这 300ms 内的指针事件，避免挡住新内容。
+.h-auto-size-fade-leave-active {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  pointer-events: none;
+  transition: opacity 0.14s var(--h-motion-ease-standard), transform 0.14s var(--h-motion-ease-standard);
+}
+
+// 轻微缩放只加在位移 / 透明度这类不会裁内容的属性上
+.h-auto-size-fade-enter-from {
+  opacity: 0;
+  transform: translateX(30px) scale(0.96);
+}
+
+.h-auto-size-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-30px) scale(0.98);
+}
+
+// ⚠️ RTL：只镜像位移（缩放与方向无关）
+[dir='rtl'] .h-auto-size-fade-enter-from {
+  transform: translateX(-30px) scale(0.96);
+}
+
+[dir='rtl'] .h-auto-size-fade-leave-to {
+  transform: translateX(30px) scale(0.98);
+}

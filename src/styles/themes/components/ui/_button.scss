@@ -1,0 +1,77 @@
+// HorizonUI · Button 皮肤
+//
+// 组件侧只输出语义类名 + data-* 状态（见 components/UI/Button.vue），
+// 全部视觉在这里；令牌一律走 --h-button-*，宿主改令牌即可换肤。
+// unstyled 时组件不挂这些类名，本文件自然失效，无需额外开关。
+//
+// 注：h-spin 关键帧来自 themes/animation（皮肤入口已引入）。
+
+.h-button {
+  width: var(--h-button-width);
+  height: var(--h-button-height);
+  padding: var(--h-button-padding);
+  font-size: var(--h-button-font-size);
+  border-radius: var(--h-button-border-radius);
+  background-color: var(--h-button-bg);
+  color: var(--h-button-text);
+  border: 1px solid var(--h-button-border);
+  gap: var(--h-button-icon-gap);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  cursor: pointer;
+  transition: var(--h-button-transition);
+  box-sizing: border-box;
+  white-space: nowrap;
+  user-select: none;
+  text-decoration: none;
+
+  // 非 button 根元素（<a> / 路由组件）没有 :disabled，用 data-disabled 兜底
+  &:hover:not(:disabled):not([data-disabled]) {
+    background-color: var(--h-button-hover-bg);
+    color: var(--h-button-hover-text);
+    text-decoration: none;
+  }
+
+  &:active:not(:disabled):not([data-disabled]) {
+    opacity: var(--h-button-active-opacity);
+  }
+
+  &:disabled,
+  &[data-disabled] {
+    opacity: var(--h-button-disabled-opacity);
+    cursor: not-allowed;
+  }
+
+  &-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: var(--h-button-icon-size);
+    color: var(--h-button-icon-color);
+
+    img {
+      width: var(--h-button-icon-size);
+      height: var(--h-button-icon-size);
+      object-fit: contain;
+    }
+  }
+
+  &-text {
+    display: flex;
+    align-items: center;
+  }
+
+  // loading 圆环：不依赖任何图标集，颜色跟随 currentColor
+  &-spinner {
+    width: var(--h-button-spinner-size);
+    height: var(--h-button-spinner-size);
+    border: var(--h-button-spinner-width) solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: h-spin var(--h-button-spinner-duration) linear infinite;
+  }
+}

@@ -1,0 +1,92 @@
+:root {
+    // 蓝色
+    --h-color-blue-50: oklch(97% 0.014 254.604);
+    --h-color-blue-100: oklch(93.2% 0.032 255.585);
+    --h-color-blue-200: oklch(88.2% 0.059 254.128);
+    --h-color-blue-300: oklch(80.9% 0.105 251.813);
+    --h-color-blue-400: oklch(70.7% 0.165 254.624);
+    --h-color-blue-500: oklch(62.3% 0.214 259.815);
+    --h-color-blue-600: oklch(54.6% 0.245 262.881);
+    --h-color-blue-700: oklch(48.8% 0.243 264.376);
+    --h-color-blue-800: oklch(42.4% 0.199 265.638);
+    --h-color-blue-900: oklch(37.9% 0.146 265.522);
+    --h-color-blue-950: oklch(28.2% 0.091 267.935);
+
+    // 绿色
+    --h-color-green-50: oklch(98.2% 0.018 155.826);
+    --h-color-green-100: oklch(96.2% 0.044 156.743);
+    --h-color-green-200: oklch(92.5% 0.084 155.995);
+    --h-color-green-300: oklch(87.1% 0.15 154.449);
+    --h-color-green-400: oklch(79.2% 0.209 151.711);
+    --h-color-green-500: oklch(72.3% 0.219 149.579);
+    --h-color-green-600: oklch(62.7% 0.194 149.214);
+    --h-color-green-700: oklch(52.7% 0.154 150.069);
+    --h-color-green-800: oklch(44.8% 0.119 151.328);
+    --h-color-green-900: oklch(39.3% 0.095 152.535);
+    --h-color-green-950: oklch(26.6% 0.065 152.934);
+
+    // 黄色
+    --h-color-yellow-50: oklch(98.7% 0.026 102.212);
+    --h-color-yellow-100: oklch(97.3% 0.071 103.193);
+    --h-color-yellow-200: oklch(94.5% 0.129 101.54);
+    --h-color-yellow-300: oklch(90.5% 0.182 98.111);
+    --h-color-yellow-400: oklch(85.2% 0.199 91.936);
+    --h-color-yellow-500: oklch(79.5% 0.184 86.047);
+    --h-color-yellow-600: oklch(68.1% 0.162 75.834);
+    --h-color-yellow-700: oklch(55.4% 0.135 66.442);
+    --h-color-yellow-800: oklch(47.6% 0.114 61.907);
+    --h-color-yellow-900: oklch(42.1% 0.095 57.708);
+    --h-color-yellow-950: oklch(28.6% 0.066 53.813);
+
+    // 红色
+    --h-color-red-50: oklch(97.1% 0.013 17.38);
+    --h-color-red-100: oklch(93.6% 0.032 17.717);
+    --h-color-red-200: oklch(88.5% 0.062 18.334);
+    --h-color-red-300: oklch(80.8% 0.114 19.571);
+    --h-color-red-400: oklch(70.4% 0.191 22.216);
+    --h-color-red-500: oklch(63.7% 0.237 25.331);
+    --h-color-red-600: oklch(57.7% 0.245 27.325);
+    --h-color-red-700: oklch(50.5% 0.213 27.518);
+    --h-color-red-800: oklch(44.4% 0.177 26.899);
+    --h-color-red-900: oklch(39.6% 0.141 25.723);
+    --h-color-red-950: oklch(25.8% 0.092 26.042);
+
+    // 粉色
+    --h-color-pink-50: oklch(97.1% 0.014 343.198);
+    --h-color-pink-100: oklch(94.8% 0.028 342.258);
+    --h-color-pink-200: oklch(89.9% 0.061 343.231);
+    --h-color-pink-300: oklch(82.3% 0.12 346.018);
+    --h-color-pink-400: oklch(71.8% 0.202 349.761);
+    --h-color-pink-500: oklch(65.6% 0.241 354.308);
+    --h-color-pink-600: oklch(59.2% 0.238 4.302);
+    --h-color-pink-700: oklch(52.5% 0.21 4.529);
+    --h-color-pink-800: oklch(45.9% 0.187 3.815);
+    --h-color-pink-900: oklch(40.8% 0.153 2.432);
+    --h-color-pink-950: oklch(28.4% 0.109 3.907);
+
+    // 中性色 - Stone
+    --h-color-stone-50: oklch(98.5% 0.001 106.423);
+    --h-color-stone-100: oklch(97% 0.001 106.424);
+    --h-color-stone-200: oklch(92.3% 0.003 48.717);
+    --h-color-stone-300: oklch(86.9% 0.005 56.366);
+    --h-color-stone-400: oklch(70.9% 0.01 56.259);
+    --h-color-stone-500: oklch(55.3% 0.013 58.071);
+    --h-color-stone-600: oklch(44.4% 0.011 73.639);
+    --h-color-stone-700: oklch(37.4% 0.01 67.558);
+    --h-color-stone-800: oklch(26.8% 0.007 34.298);
+    --h-color-stone-900: oklch(21.6% 0.006 56.043);
+    --h-color-stone-950: oklch(14.7% 0.004 49.25);
+
+    // 中性色 - Slate（备选）
+    --h-color-slate-50: oklch(98.4% 0.003 247.858);
+    --h-color-slate-100: oklch(96.8% 0.007 247.896);
+    --h-color-slate-200: oklch(92.9% 0.013 255.508);
+    --h-color-slate-300: oklch(86.9% 0.022 252.894);
+    --h-color-slate-400: oklch(70.4% 0.04 256.788);
+    --h-color-slate-500: oklch(55.4% 0.046 257.417);
+    --h-color-slate-600: oklch(44.6% 0.043 257.281);
+    --h-color-slate-700: oklch(37.2% 0.044 257.287);
+    --h-color-slate-800: oklch(27.9% 0.041 260.031);
+    --h-color-slate-900: oklch(20.8% 0.042 265.755);
+    --h-color-slate-950: oklch(12.9% 0.042 264.695);
+}

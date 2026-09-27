@@ -1,0 +1,34 @@
+// HorizonUI · ScrollingText 皮肤
+//
+// 结构（wrapper → container → content → item）由组件脚本动态生成，语义类名同样走 skin()；
+// 脚本查找节点一律用 data-h-scroll-content / data-h-scroll-item，不依赖这些类名
+//（脱皮模式下语义类名会被摘掉，靠类名找节点会失效）。
+
+.h-scrolling-text {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  line-height: 1;
+}
+
+.h-scrolling-text-container {
+  display: flex;
+  width: max-content;
+  position: relative;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  min-width: 100%;
+}
+
+.h-scrolling-text-content {
+  display: flex;
+  width: 100%;
+}
+
+.h-scrolling-text-item {
+  flex-shrink: 0;
+  display: inline-block;
+  white-space: pre;
+  /* 保持原始空格格式 */
+}

@@ -1,0 +1,112 @@
+// 视口单位兼容性混合宏
+// 处理 dvh/lvh/svh/dvw/lvw/svw 等现代视口单位的浏览器兼容性
+
+// dvh 兼容混合宏
+// @param $property CSS 属性名
+// @param $value 值（不包含单位）
+// @param $fallback-unit 回退单位，默认vh
+@mixin viewport-unit($property, $value, $fallback-unit: vh) {
+  // 回退方案 - 旧版浏览器
+  #{$property}: #{$value}#{$fallback-unit};
+  
+  // 现代浏览器支持
+  #{$property}: #{$value}dvh;
+}
+
+// dvw 兼容混合宏（动态视口宽度）
+// @param $property CSS 属性名
+// @param $value 值（不包含单位）
+// @param $fallback-unit 回退单位，默认vw
+@mixin viewport-width-unit($property, $value, $fallback-unit: vw) {
+  // 回退方案 - 旧版浏览器
+  #{$property}: #{$value}#{$fallback-unit};
+  
+  // 现代浏览器支持
+  #{$property}: #{$value}dvw;
+}
+
+// lvh 兼容混合宏（大视口高度）
+// @param $property CSS 属性名  
+// @param $value 值（不包含单位）
+// @param $fallback-unit 回退单位，默认vh
+@mixin large-viewport-unit($property, $value, $fallback-unit: vh) {
+  // 回退方案
+  #{$property}: #{$value}#{$fallback-unit};
+  
+  // 现代浏览器支持
+  #{$property}: #{$value}lvh;
+}
+
+// svh 兼容混合宏（小视口高度）
+// @param $property CSS 属性名
+// @param $value 值（不包含单位）  
+// @param $fallback-unit 回退单位，默认vh
+@mixin small-viewport-unit($property, $value, $fallback-unit: vh) {
+  // 回退方案
+  #{$property}: #{$value}#{$fallback-unit};
+  
+  // 现代浏览器支持
+  #{$property}: #{$value}svh;
+}
+
+// lvw 兼容混合宏（大视口宽度）
+// @param $property CSS 属性名
+// @param $value 值（不包含单位）
+// @param $fallback-unit 回退单位，默认vw
+@mixin large-viewport-width-unit($property, $value, $fallback-unit: vw) {
+  // 回退方案
+  #{$property}: #{$value}#{$fallback-unit};
+  
+  // 现代浏览器支持
+  #{$property}: #{$value}lvw;
+}
+
+// svw 兼容混合宏（小视口宽度）
+// @param $property CSS 属性名
+// @param $value 值（不包含单位）
+// @param $fallback-unit 回退单位，默认vw
+@mixin small-viewport-width-unit($property, $value, $fallback-unit: vw) {
+  // 回退方案
+  #{$property}: #{$value}#{$fallback-unit};
+  
+  // 现代浏览器支持
+  #{$property}: #{$value}svw;
+}
+
+// 通用视口属性混合宏
+// @param $property CSS 属性名，默认min-height
+// @param $value 值（不包含单位），默认100
+// @param $unit-type 单位类型：dvh|lvh|svh|dvw|lvw|svw
+// @param $fallback-unit 回退单位
+@mixin viewport-property($property: min-height, $value: 100, $unit-type: dvh, $fallback-unit: null) {
+  // 根据单位类型确定默认回退单位
+  @if $fallback-unit == null {
+    @if $unit-type == dvh or $unit-type == lvh or $unit-type == svh {
+      $fallback-unit: vh;
+    } @else {
+      $fallback-unit: vw;
+    }
+  }
+  
+  // 回退方案
+  #{$property}: #{$value}#{$fallback-unit};
+  
+  // 现代浏览器支持
+  #{$property}: #{$value}#{$unit-type};
+}
+
+// Viewport最小高度
+// @param $base-value 基础数值
+// @param $unit-type 单位类型：dvh|lvh|svh
+// @param $fallback-unit 回退单位，默认vh
+@mixin viewport-height($value: 100, $unit-type: dvh, $fallback-unit: vh) {
+  @include viewport-property(min-height, $value, $unit-type, $fallback-unit);
+}
+
+// Viewport最小宽度
+// @param $base-value 基础数值
+// @param $unit-type 单位类型：dvw|lvw|svw
+// @param $fallback-unit 回退单位，默认vw
+@mixin viewport-width($value: 100, $unit-type: dvw, $fallback-unit: vw) {
+  @include viewport-property(min-width, $value, $unit-type, $fallback-unit);
+}

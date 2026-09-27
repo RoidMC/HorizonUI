@@ -1,0 +1,4 @@
+:root {
+    // HoverCard 的 z 轴：可用组件 zIndex prop 覆盖（会内联下发同名令牌）。
+    --h-hover-card-z: var(--h-z-popover);
+}

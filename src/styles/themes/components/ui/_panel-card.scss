@@ -1,0 +1,123 @@
+// HorizonUI · PanelCard 皮肤
+//
+// 组件侧只输出语义类名 + 根状态（data-collapsible / data-collapsed），视觉全在这里；
+// 变体用修饰类 h-panel-card--default / --elevated / --outlined。
+// 令牌走 --h-panel-card-*（见 variables/components/ui/_panel-card.scss）。
+@use '../../mixins' as HorizonMixins;
+
+.h-panel-card {
+  width: var(--h-panel-card-width);
+  background: var(--h-panel-card-bg);
+  backdrop-filter: var(--h-panel-card-backdrop-filter);
+  border: var(--h-panel-card-border);
+  border-radius: var(--h-panel-card-border-radius);
+  overflow: hidden;
+  transition: var(--h-panel-card-transition);
+  box-shadow: var(--h-panel-card-shadow);
+
+  &:hover {
+    box-shadow: var(--h-panel-card-hover-shadow);
+  }
+
+  &--elevated {
+    box-shadow: var(--h-panel-card-elevated-shadow);
+
+    &:hover {
+      box-shadow: var(--h-panel-card-elevated-hover-shadow);
+    }
+  }
+
+  &--outlined {
+    border: var(--h-panel-card-outlined-border);
+    box-shadow: var(--h-panel-card-outlined-shadow);
+
+    &:hover {
+      box-shadow: var(--h-panel-card-outlined-hover-shadow);
+    }
+  }
+
+  &__header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--h-panel-card-header-padding);
+    @include HorizonMixins.decorator-horizon-transition-bar($position-map: (inline-start: 0.4rem, top: 50%), $height: 50%);
+  }
+
+  &__header-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  &__icon {
+    font-size: var(--h-panel-card-icon-size);
+    line-height: 1;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--h-panel-card-title-size);
+    color: var(--h-panel-card-title-color);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__expand-icon {
+    font-size: var(--h-panel-card-expand-icon-size);
+    color: var(--h-panel-card-expand-icon-color);
+    transition: transform 0.3s ease;
+
+    // 原 __expand-icon--expanded：data-expanded 挂在图标元素上
+    &[data-expanded] {
+      transform: rotate(180deg);
+    }
+  }
+
+  // collapsible 时 header 显示手型（原 .panel-card--collapsible 派生自根状态）
+  &[data-collapsible] .h-panel-card__header {
+    cursor: pointer;
+  }
+
+  &__divider {
+    height: 1px;
+    background: var(--h-panel-card-divider-bg);
+    transition: opacity 0.3s ease;
+  }
+
+  // 收起（根 data-collapsed）时隐藏分隔线（原 __divider--collapsed）
+  &[data-collapsed] .h-panel-card__divider {
+    opacity: 0;
+  }
+
+  &__body-wrapper {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  // 收起时网格行高归零实现折叠动画（原 __body-wrapper--collapsed）
+  &[data-collapsed] .h-panel-card__body-wrapper {
+    grid-template-rows: 0fr;
+  }
+
+  &__body {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  // __body-inner 的 padding 由组件内联 style 下发（paddingVarMap），此处不声明
+}

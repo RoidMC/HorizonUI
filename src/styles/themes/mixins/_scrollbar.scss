@@ -1,0 +1,39 @@
+// 统一滚动条样式 mixin
+// @param $thumb 滑块颜色（建议用主题感知 token，如 --h-border-strong）
+// @param $track 轨道颜色
+// @param $width 滑块宽度
+@mixin scrollbar(
+    $thumb: var(--h-border-strong),
+    $track: transparent,
+    $width: 8px
+) {
+    scrollbar-width: thin;
+    scrollbar-color: $thumb $track;
+
+    &::-webkit-scrollbar {
+        width: $width;
+        height: $width;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $track;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $thumb;
+        border-radius: $width;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: var(--h-border-inverse-strong);
+    }
+}
+
+// 隐藏滚动条但保留滚动能力（Firefox + WebKit）
+@mixin hide-scrollbar() {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}

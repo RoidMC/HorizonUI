@@ -1,0 +1,27 @@
+// HorizonUI · TriangleMask 皮肤
+//
+// 组件侧只输出语义类名（见 components/UI/TriangleMask.vue）；
+// 尺寸 / 底色 / 形状（clip-path）由组件内联 style 下发，这里只管结构与交互。
+// 令牌走 --h-triangle-mask-*（见 variables/components/ui/_triangle-mask.scss）。
+
+.h-triangle-mask {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: var(--h-triangle-mask-transition);
+
+  &:hover {
+    opacity: var(--h-triangle-mask-hover-opacity);
+  }
+
+  &-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+}

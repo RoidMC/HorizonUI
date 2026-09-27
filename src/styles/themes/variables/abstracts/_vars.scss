@@ -1,0 +1,256 @@
+/**
+ * Horizon UI 语义变量
+ * 所有语义色从调色盘种子（--h-palette-*）推导，修改种子即可切换整套主题。
+ */
+
+// 调色盘种子注册为 typed custom property，确保颜色切换时可以平滑过渡
+@property --h-palette-primary {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: transparent;
+}
+
+@property --h-palette-success {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: transparent;
+}
+
+@property --h-palette-warning {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: transparent;
+}
+
+@property --h-palette-error {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: transparent;
+}
+
+@property --h-palette-info {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: transparent;
+}
+
+@property --h-palette-neutral {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: transparent;
+}
+
+:root {
+    --h-font-family: "HarmonyOS Sans SC", "HarmonyOS Sans", "HarmonyOS Sans TC", "DingTalk JinBuTi", system-ui, sans-serif;
+    --h-font-harmony: "HarmonyOS Sans SC", "HarmonyOS Sans", "HarmonyOS Sans TC";
+    --h-font-dingtalk: "DingTalk JinBuTi";
+
+    /* Common - 公共变量 */
+    --h-common-blur-xs: 6px;
+    --h-common-blur-sm: 8px;
+    --h-common-blur-base: 10px;
+
+    /* Font Sizes - 文本和图标大小 */
+    --h-text-size-xs: 0.75rem;
+    --h-text-size-sm: 0.875rem;
+    --h-text-size-base: 1rem;
+    --h-text-size-md: 1.125rem;
+    --h-text-size-lg: 1.25rem;
+    --h-text-size-xl: 1.5rem;
+    --h-icon-size-xs: var(--h-text-size-xs);
+    --h-icon-size-sm: var(--h-text-size-sm);
+    --h-icon-size-base: var(--h-text-size-base);
+    --h-icon-size-md: var(--h-text-size-md);
+    --h-icon-size-lg: var(--h-text-size-lg);
+    --h-icon-size-xl: var(--h-text-size-xl);
+
+    /* Border Radius - 边框圆角大小 */
+    --h-border-radius-none: 0;
+    --h-border-radius-xs: 0.25rem;
+    --h-border-radius-sm: 0.5rem;
+    --h-border-radius-base: 0.75rem;
+    --h-border-radius-lg: 1.25rem;
+    --h-border-radius-xl: 1.5rem;
+
+    /* Spacing - 间距比例（0.25rem 基准）*/
+    --h-space-0: 0;
+    --h-space-1: 0.25rem;
+    --h-space-2: 0.5rem;
+    --h-space-3: 0.75rem;
+    --h-space-4: 1rem;
+    --h-space-5: 1.25rem;
+    --h-space-6: 1.5rem;
+    --h-space-8: 2rem;
+    --h-space-10: 2.5rem;
+    --h-space-12: 3rem;
+    --h-space-16: 4rem;
+
+    /* Typography - 字重与行高 */
+    --h-font-weight-regular: 400;
+    --h-font-weight-medium: 500;
+    --h-font-weight-semibold: 600;
+    --h-font-weight-bold: 700;
+    --h-line-height-tight: 1.25;
+    --h-line-height-snug: 1.4;
+    --h-line-height-normal: 1.5;
+    --h-line-height-relaxed: 1.75;
+
+    /* Motion - 动效时长与缓动（收编 $ios-ease / --h-nav-transition-timing）*/
+    --h-motion-duration-fast: 0.15s;
+    --h-motion-duration-base: 0.2s;
+    --h-motion-duration-slow: 0.3s;
+    --h-motion-duration-slower: 0.45s;
+    --h-motion-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --h-motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --h-motion-ease-in-out: cubic-bezier(0.4, 0, 1, 1);
+    --h-motion-ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
+    --h-motion-ease-emphasized: cubic-bezier(0.23, 1, 0.32, 1);
+
+    /* Z-Index - 统一叠层顺序（单一来源，禁止硬编码数字）
+     * 设计意图（自下而上）：
+     *   基础内容 → 浮层(下拉/吸顶/固定) → 导航/抽屉 → 模态体系 → 气泡类 → 全局加载 → 通知 → 调试
+     *   规则：
+     *   - 通知(Toast) 必须位于最上层（高于模态、气泡、甚至全局 loading），
+     *     否则全屏 loading 会遮住正在滑入的 toast，造成动画"中途消失"的错觉。
+     *   - 模态体系内部：backdrop 永远低于 modal 本体。
+     *   - debug 独立置顶，仅用于开发期浮层。
+     */
+    --h-z-base: 0; // 普通文档流内容
+    --h-z-dropdown: 100; // 下拉菜单
+    --h-z-sticky: 200; // 吸顶元素
+    --h-z-fixed: 300; // 固定定位条
+    --h-z-nav: 400; // 顶部/侧边导航
+    --h-z-drawer: 500; // 抽屉
+    --h-z-modal-backdrop: 600; // 模态遮罩（低于 modal 本体）
+    --h-z-modal: 700; // 模态框
+    --h-z-popover: 800; // 气泡/悬浮卡(Tooltip / HoverCard)
+    --h-z-loading: 900; // 全局加载层（低于 toast，保证通知可见）
+    --h-z-toast: 1000; // 通知：顶层，永远可见
+    --h-z-debug: 9999; // 调试浮层（开发期）
+
+    /* 调色盘 - 界面基础色 */
+    --h-surface: var(--h-color-stone-50);
+    --h-surface-solid: var(--h-color-stone-50);
+    --h-surface-elevated: var(--h-color-stone-200);
+    --h-surface-sunken: var(--h-color-stone-300);
+    --h-surface-inverse: var(--h-color-stone-950);
+
+    --h-text: var(--h-color-stone-950);
+    --h-text-secondary: var(--h-color-stone-600);
+    --h-text-tertiary: var(--h-color-stone-400);
+    --h-text-inverse: var(--h-color-stone-50);
+
+    /* 调色盘种子 - 修改这些变量可切换整套主题色 */
+    --h-palette-primary: var(--h-color-pink-300);
+    --h-palette-success: var(--h-color-green-500);
+    --h-palette-warning: var(--h-color-yellow-500);
+    --h-palette-error: var(--h-color-red-500);
+    --h-palette-info: var(--h-color-blue-500);
+    --h-palette-neutral: var(--h-color-stone-500);
+
+    /* 语义色 - 从调色盘种子引用，变体用 color-mix 推导 */
+    --h-primary: var(--h-palette-primary);
+    --h-success: var(--h-palette-success);
+    --h-warning: var(--h-palette-warning);
+    --h-error: var(--h-palette-error);
+    --h-info: var(--h-palette-info);
+
+    --h-primary-soft: color-mix(in oklch, var(--h-primary) 15%, transparent);
+    --h-primary-hover: color-mix(in oklch, var(--h-primary) 80%, black);
+    --h-primary-active: color-mix(in oklch, var(--h-primary) 65%, black);
+    --h-primary-strong: color-mix(in oklch, var(--h-primary) 65%, black);
+
+    --h-success-soft: color-mix(in oklch, var(--h-success) 15%, transparent);
+    --h-success-hover: color-mix(in oklch, var(--h-success) 75%, black);
+    --h-success-active: color-mix(in oklch, var(--h-success) 60%, black);
+    --h-success-strong: color-mix(in oklch, var(--h-success) 75%, black);
+
+    --h-warning-soft: color-mix(in oklch, var(--h-warning) 15%, transparent);
+    --h-warning-hover: color-mix(in oklch, var(--h-warning) 75%, black);
+    --h-warning-active: color-mix(in oklch, var(--h-warning) 60%, black);
+    --h-warning-strong: color-mix(in oklch, var(--h-warning) 75%, black);
+
+    --h-error-soft: color-mix(in oklch, var(--h-error) 15%, transparent);
+    --h-error-hover: color-mix(in oklch, var(--h-error) 75%, black);
+    --h-error-active: color-mix(in oklch, var(--h-error) 60%, black);
+    --h-error-strong: color-mix(in oklch, var(--h-error) 75%, black);
+
+    --h-info-soft: color-mix(in oklch, var(--h-info) 15%, transparent);
+    --h-info-hover: color-mix(in oklch, var(--h-info) 75%, black);
+    --h-info-active: color-mix(in oklch, var(--h-info) 60%, black);
+    --h-info-strong: color-mix(in oklch, var(--h-info) 75%, black);
+
+    /* 衍生色 - 使用 color-mix 自动生成 */
+    --h-surface-bg-95: color-mix(in srgb, var(--h-surface) 95%, transparent);
+    --h-surface-bg-90: color-mix(in srgb, var(--h-surface) 90%, transparent);
+    --h-surface-bg-85: color-mix(in srgb, var(--h-surface) 85%, transparent);
+    --h-surface-bg-80: color-mix(in srgb, var(--h-surface) 80%, transparent);
+    --h-surface-bg-70: color-mix(in srgb, var(--h-surface) 70%, transparent);
+    --h-surface-bg-60: color-mix(in srgb, var(--h-surface) 60%, transparent);
+    --h-surface-bg-50: color-mix(in srgb, var(--h-surface) 50%, transparent);
+    --h-surface-bg-40: color-mix(in srgb, var(--h-surface) 40%, transparent);
+    --h-surface-bg-30: color-mix(in srgb, var(--h-surface) 30%, transparent);
+    --h-surface-bg-20: color-mix(in srgb, var(--h-surface) 20%, transparent);
+    --h-surface-bg-10: color-mix(in srgb, var(--h-surface) 10%, transparent);
+
+    /* 反色衍生色 - 用于 inverse 背景上的半透明填充和边框 */
+    --h-surface-inverse-bg-95: color-mix(in srgb, var(--h-surface-inverse) 95%, transparent);
+    --h-surface-inverse-bg-90: color-mix(in srgb, var(--h-surface-inverse) 90%, transparent);
+    --h-surface-inverse-bg-85: color-mix(in srgb, var(--h-surface-inverse) 85%, transparent);
+    --h-surface-inverse-bg-80: color-mix(in srgb, var(--h-surface-inverse) 80%, transparent);
+    --h-surface-inverse-bg-70: color-mix(in srgb, var(--h-surface-inverse) 70%, transparent);
+    --h-surface-inverse-bg-60: color-mix(in srgb, var(--h-surface-inverse) 60%, transparent);
+    --h-surface-inverse-bg-50: color-mix(in srgb, var(--h-surface-inverse) 50%, transparent);
+    --h-surface-inverse-bg-40: color-mix(in srgb, var(--h-surface-inverse) 40%, transparent);
+    --h-surface-inverse-bg-30: color-mix(in srgb, var(--h-surface-inverse) 30%, transparent);
+    --h-surface-inverse-bg-20: color-mix(in srgb, var(--h-surface-inverse) 20%, transparent);
+    --h-surface-inverse-bg-10: color-mix(in srgb, var(--h-surface-inverse) 10%, transparent);
+    --h-border-inverse: color-mix(in srgb, var(--h-text-inverse) 10%, transparent);
+    --h-border-inverse-strong: color-mix(in srgb, var(--h-text-inverse) 20%, transparent);
+
+    --h-border: color-mix(in srgb, var(--h-text) 10%, transparent);
+    --h-border-strong: color-mix(in srgb, var(--h-text) 20%, transparent);
+    --h-shadow: color-mix(in srgb, var(--h-surface) 15%, transparent);
+    --h-overlay: color-mix(in srgb, var(--h-surface) 5%, transparent);
+    --h-interactive: color-mix(in srgb, var(--h-surface) 50%, transparent);
+    --h-interactive-active: color-mix(in srgb, var(--h-surface) 5%, transparent);
+
+    /* Hover 叠加层 - 基于文字色做半透明填充，随主题明暗自动翻转（亮色压暗 / 暗色提亮）*/
+    --h-hover: color-mix(in oklch, var(--h-text) 6%, transparent);
+    --h-hover-strong: color-mix(in oklch, var(--h-text) 10%, transparent);
+
+    /* Shadow - 阴影分档（中性 elevation，随主题自动翻转）*/
+    --h-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.1);
+    --h-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --h-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.08);
+
+    // Widget 操作按钮 hover 光环：宽度与颜色集中定义；
+    // 留白（.horizon-widget-page padding）引用同一宽度，改粗细时自动联动，避免被轮播裁切
+    --h-widget-hover-ring-width: 1px;
+    --h-widget-hover-ring-color: var(--h-surface-inverse-bg-50);
+}
+
+:root.dark {
+    --h-surface: var(--h-color-stone-900);
+    --h-surface-solid: var(--h-color-stone-900);
+    --h-surface-elevated: var(--h-color-stone-800);
+    --h-surface-sunken: var(--h-color-stone-950);
+    --h-surface-inverse: var(--h-color-stone-50);
+
+    --h-text: var(--h-color-stone-50);
+    --h-text-secondary: var(--h-color-stone-400);
+    --h-text-tertiary: var(--h-color-stone-500);
+    --h-text-inverse: var(--h-color-stone-950);
+
+    /* 深色模式下语义色基于调色盘种子提亮，保证对比度；变体仍用 color-mix 推导 */
+    --h-primary: color-mix(in oklch, var(--h-palette-primary) 92%, white);
+    --h-success: color-mix(in oklch, var(--h-palette-success) 85%, white);
+    --h-warning: color-mix(in oklch, var(--h-palette-warning) 85%, white);
+    --h-error: color-mix(in oklch, var(--h-palette-error) 85%, white);
+    --h-info: color-mix(in oklch, var(--h-palette-info) 85%, white);
+
+    /* 阴影分档（深色模式下更实）*/
+    --h-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --h-shadow-base: 0 2px 12px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2);
+    --h-shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
+}
