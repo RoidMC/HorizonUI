@@ -9,10 +9,27 @@
  * 刻意不含：全局元素重置（main.scss）、字体 @font-face、页面骨架（.horizon-*）、
  * 导航与页脚 —— 那些是宿主的页面层，由宿主决定要不要加载。
  *
- * 换肤：宿主覆盖 --h-* 变量即可，不需要动构建链（也不引入 UnoCSS/Tailwind）。
+ * ── 级联层（@layer）─────────────────────────────────────────────
+ * 库的全部规则都装在 @layer horizon 里。CSS 规范规定「未分层的样式永远压过
+ * 所有分层样式」，所以宿主只要不把自己的覆盖写进 @layer，就天然赢过库，
+ * 且与「谁先加载」完全无关 —— 宿主不需要关心引入顺序，也不必手动 import。
+ *
+ * 层序声明写在文件首行，作用是钉死 base 在 horizon 之下：
+ *   base    —— 宿主的全局重置（* / body），语义上应低于组件规则
+ *   horizon —— 库自身
+ * 这样宿主的 `* { margin: 0 }` 之类的重置不会反压库组件自身的规则。
+ * 声明位置不依赖加载顺序：dev 下宿主先出（base 先声明），prod 下本文件先出
+ * （由这行同时声明 base 与 horizon），两种情形都推得 base < horizon。
+ *
  * 零样式：改从 '@roidmc/horizon-ui/unstyled' 导入，或在 createHorizon({ unstyled: true }) 全局脱皮。
  */
-@use "./themes/variables/abstracts" as h-tokens;
-@use "./themes/variables/components/ui" as h-component-tokens;
-@use "./themes/animation" as h-animation;
-@use "./themes/components/ui" as h-component-skins;
+@use "sass:meta";
+
+@layer base, horizon;
+
+@layer horizon {
+    @include meta.load-css("./themes/variables/abstracts");
+    @include meta.load-css("./themes/variables/components/ui");
+    @include meta.load-css("./themes/animation");
+    @include meta.load-css("./themes/components/ui");
+}

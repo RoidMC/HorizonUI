@@ -5,6 +5,8 @@ export { useDirection } from './composables/useDirection'
 export { createHorizon, provideHorizon, useHorizonConfig, HORIZON_CONFIG } from './config'
 export type { HorizonConfig } from './config'
 export { useToast, createToastStore, TOAST_KEY } from './composables/useToast'
+export { useAnimatedSize } from './utils/animated-size'
+export type { AnimatedSizeOptions } from './utils/animated-size'
 export type {
   ToastStore,
   ToastAPI,

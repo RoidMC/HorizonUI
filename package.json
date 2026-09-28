@@ -21,6 +21,7 @@
     ".": "./src/index.ts",
     "./unstyled": "./src/unstyled.ts",
     "./styles": "./src/styles/index.scss",
+    "./nuxt": "./src/nuxt.ts",
     "./package.json": "./package.json"
   },
   "scripts": {

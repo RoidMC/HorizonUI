@@ -37,9 +37,12 @@ const onClick = (event: MouseEvent) => {
 <template>
   <div v-bind="$attrs" :class="skin('h-avatar')" @click="onClick">
     <img v-if="props.src" :src="props.src" :alt="props.alt" :class="skin('h-avatar-img')" />
-    <img v-else-if="config.defaultAvatar" :src="config.defaultAvatar" alt="Default avatar"
-      :class="skin('h-avatar-img')" />
-    <slot v-else name="placeholder" />
+    <!-- 兜底优先级：src → 调用方的 #placeholder 插槽 → 全局 defaultAvatar。
+         插槽必须压过 defaultAvatar，否则宿主的自定义占位会被默认头像图整个吃掉。 -->
+    <slot v-else name="placeholder">
+      <img v-if="config.defaultAvatar" :src="config.defaultAvatar" alt="Default avatar"
+        :class="skin('h-avatar-img')" />
+    </slot>
     <slot />
   </div>
 </template>

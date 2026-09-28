@@ -1,4 +1,5 @@
 @use "./layout";
 @use "./palette";
 @use "./vars";
-@use "./presets";
+// 不含 presets：[data-palette="…"] 那几套命名主题是宿主的产品决策
+//（调色盘列表、切换 UI 都在宿主侧），库只定义 --h-palette-* 种子契约与默认值。

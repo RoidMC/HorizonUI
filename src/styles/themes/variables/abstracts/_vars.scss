@@ -41,9 +41,10 @@
 }
 
 :root {
-    --h-font-family: "HarmonyOS Sans SC", "HarmonyOS Sans", "HarmonyOS Sans TC", "DingTalk JinBuTi", system-ui, sans-serif;
-    --h-font-harmony: "HarmonyOS Sans SC", "HarmonyOS Sans", "HarmonyOS Sans TC";
-    --h-font-dingtalk: "DingTalk JinBuTi";
+    /* Font Family - 中性字体栈：组件库不绑定任何品牌字体，
+       宿主覆盖 --h-font-family 即可换成自己的品牌栈（品牌字体由宿主负责加载）。 */
+    --h-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+        "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
 
     /* Common - 公共变量 */
     --h-common-blur-xs: 6px;

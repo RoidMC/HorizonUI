@@ -3,7 +3,6 @@
 // 组件侧只输出语义类名 + 根状态（data-collapsible / data-collapsed），视觉全在这里；
 // 变体用修饰类 h-panel-card--default / --elevated / --outlined。
 // 令牌走 --h-panel-card-*（见 variables/components/ui/_panel-card.scss）。
-@use '../../mixins' as HorizonMixins;
 
 .h-panel-card {
   width: var(--h-panel-card-width);
@@ -42,7 +41,10 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--h-panel-card-header-padding);
-    @include HorizonMixins.decorator-horizon-transition-bar($position-map: (inline-start: 0.4rem, top: 50%), $height: 50%);
+
+    // 注意：原先 header 左侧的渐变装饰过渡条（horizon-transition-bar）不在此提供。
+    // 那是产品级装饰效果，属调用方决策 —— 由宿主在自己的样式里给
+    // .h-panel-card__header 叠加（宿主样式未分层，天然压过 @layer horizon）。
   }
 
   &__header-content {
