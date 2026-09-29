@@ -59,7 +59,24 @@ export type ToastPosition =
 const DEFAULT_DURATION = 4000
 const LOADING_DURATION = Infinity
 const ERROR_DURATION = 6000
-const EXIT_MS = 220
+/** 读不到 --h-toast-exit-duration 时的兜底，与该令牌的默认值保持一致 */
+const FALLBACK_EXIT_MS = 320
+
+/**
+ * 退出动画时长。单一来源是皮肤里的 --h-toast-exit-duration —— CSS 的 animation / transition
+ * 用的也是它。这里刻意不写死数值：两处各写一份的话，改了皮肤时长而卸载时机没跟上，
+ * DOM 就会在动画播完前被卸载，退出动画被截断。
+ *
+ * 读 documentElement 而不是某个容器：toast viewport 是 portal 到 body 的，只继承 :root
+ * 上的变量。皮肤没注入（unstyled / SSR）时退回 FALLBACK_EXIT_MS。
+ */
+function exitMs(): number {
+  if (typeof document === 'undefined') return FALLBACK_EXIT_MS
+  const raw = getComputedStyle(document.documentElement).getPropertyValue('--h-toast-exit-duration').trim()
+  if (!raw) return FALLBACK_EXIT_MS
+  const value = raw.endsWith('ms') ? Number.parseFloat(raw) : Number.parseFloat(raw) * 1000
+  return Number.isFinite(value) && value > 0 ? value : FALLBACK_EXIT_MS
+}
 
 export interface ToastAPI {
   (message: string, opts?: ToastOptions): string
@@ -174,8 +191,8 @@ export function createToastStore(): ToastStore {
     // 先标记 exiting → 触发 CSS 退出动画
     const t = toasts.value.find((x) => x.id === id)
     if (t) t.exiting = true
-    // 动画播完后再从数组移除（Vue 才会卸载 DOM）
-    window.setTimeout(() => remove(id), EXIT_MS)
+    // 动画播完后再从数组移除（Vue 才会卸载 DOM）；时长取自皮肤令牌，与 CSS 同源
+    window.setTimeout(() => remove(id), exitMs())
   }
 
   function dismiss(id?: string): void {

@@ -48,7 +48,6 @@
 
     /* Common - 公共变量 */
     --h-common-blur-xs: 6px;
-    --h-common-blur-sm: 8px;
     --h-common-blur-base: 10px;
 
     /* Font Sizes - 文本和图标大小 */
@@ -65,61 +64,41 @@
     --h-icon-size-lg: var(--h-text-size-lg);
     --h-icon-size-xl: var(--h-text-size-xl);
 
-    /* Border Radius - 边框圆角大小 */
+    /* Border Radius - 边框圆角大小
+       基准 --h-border-radius 是唯一旋钮，其余档位由它推导，宿主改一个变量即可整体调整圆度。
+       none 是绝对值，有意不参与缩放：只表示「直角」这一设计语言，不随基准变大变小。 */
+    --h-border-radius: 0.75rem;
     --h-border-radius-none: 0;
-    --h-border-radius-xs: 0.25rem;
-    --h-border-radius-sm: 0.5rem;
-    --h-border-radius-base: 0.75rem;
-    --h-border-radius-lg: 1.25rem;
-    --h-border-radius-xl: 1.5rem;
+    --h-border-radius-xs: calc(var(--h-border-radius) / 3);
+    --h-border-radius-sm: calc(var(--h-border-radius) * 2 / 3);
+    --h-border-radius-base: var(--h-border-radius);
 
     /* Spacing - 间距比例（0.25rem 基准）*/
-    --h-space-0: 0;
-    --h-space-1: 0.25rem;
-    --h-space-2: 0.5rem;
     --h-space-3: 0.75rem;
     --h-space-4: 1rem;
-    --h-space-5: 1.25rem;
     --h-space-6: 1.5rem;
-    --h-space-8: 2rem;
-    --h-space-10: 2.5rem;
-    --h-space-12: 3rem;
-    --h-space-16: 4rem;
 
     /* Typography - 字重与行高 */
-    --h-font-weight-regular: 400;
-    --h-font-weight-medium: 500;
     --h-font-weight-semibold: 600;
     --h-font-weight-bold: 700;
-    --h-line-height-tight: 1.25;
     --h-line-height-snug: 1.4;
-    --h-line-height-normal: 1.5;
-    --h-line-height-relaxed: 1.75;
 
-    /* Motion - 动效时长与缓动（收编 $ios-ease / --h-nav-transition-timing）*/
+    /* Motion - 动效时长与缓动（$ios-ease / --h-nav-transition-timing 已收编到此处）
+       时长只保留 fast 这一档：其余档位在组件里从未被引用过。 */
     --h-motion-duration-fast: 0.15s;
-    --h-motion-duration-base: 0.2s;
-    --h-motion-duration-slow: 0.3s;
-    --h-motion-duration-slower: 0.45s;
     --h-motion-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-    --h-motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --h-motion-ease-in-out: cubic-bezier(0.4, 0, 1, 1);
     --h-motion-ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
     --h-motion-ease-emphasized: cubic-bezier(0.23, 1, 0.32, 1);
 
     /* Z-Index - 统一叠层顺序（单一来源，禁止硬编码数字）
-     * 设计意图（自下而上）：
-     *   基础内容 → 浮层(下拉/吸顶/固定) → 导航/抽屉 → 模态体系 → 气泡类 → 全局加载 → 通知 → 调试
+     * 设计意图（自下而上）：导航/抽屉 → 模态体系 → 气泡类 → 全局加载 → 通知 → 调试
      *   规则：
      *   - 通知(Toast) 必须位于最上层（高于模态、气泡、甚至全局 loading），
      *     否则全屏 loading 会遮住正在滑入的 toast，造成动画"中途消失"的错觉。
      *   - 模态体系内部：backdrop 永远低于 modal 本体。
      *   - debug 独立置顶，仅用于开发期浮层。
      */
-    --h-z-base: 0; // 普通文档流内容
-    --h-z-dropdown: 100; // 下拉菜单
-    --h-z-sticky: 200; // 吸顶元素
-    --h-z-fixed: 300; // 固定定位条
     --h-z-nav: 400; // 顶部/侧边导航
     --h-z-drawer: 500; // 抽屉
     --h-z-modal-backdrop: 600; // 模态遮罩（低于 modal 本体）
@@ -184,28 +163,12 @@
     /* 衍生色 - 使用 color-mix 自动生成 */
     --h-surface-bg-95: color-mix(in srgb, var(--h-surface) 95%, transparent);
     --h-surface-bg-90: color-mix(in srgb, var(--h-surface) 90%, transparent);
-    --h-surface-bg-85: color-mix(in srgb, var(--h-surface) 85%, transparent);
     --h-surface-bg-80: color-mix(in srgb, var(--h-surface) 80%, transparent);
     --h-surface-bg-70: color-mix(in srgb, var(--h-surface) 70%, transparent);
-    --h-surface-bg-60: color-mix(in srgb, var(--h-surface) 60%, transparent);
     --h-surface-bg-50: color-mix(in srgb, var(--h-surface) 50%, transparent);
-    --h-surface-bg-40: color-mix(in srgb, var(--h-surface) 40%, transparent);
-    --h-surface-bg-30: color-mix(in srgb, var(--h-surface) 30%, transparent);
-    --h-surface-bg-20: color-mix(in srgb, var(--h-surface) 20%, transparent);
-    --h-surface-bg-10: color-mix(in srgb, var(--h-surface) 10%, transparent);
 
     /* 反色衍生色 - 用于 inverse 背景上的半透明填充和边框 */
-    --h-surface-inverse-bg-95: color-mix(in srgb, var(--h-surface-inverse) 95%, transparent);
-    --h-surface-inverse-bg-90: color-mix(in srgb, var(--h-surface-inverse) 90%, transparent);
-    --h-surface-inverse-bg-85: color-mix(in srgb, var(--h-surface-inverse) 85%, transparent);
-    --h-surface-inverse-bg-80: color-mix(in srgb, var(--h-surface-inverse) 80%, transparent);
-    --h-surface-inverse-bg-70: color-mix(in srgb, var(--h-surface-inverse) 70%, transparent);
-    --h-surface-inverse-bg-60: color-mix(in srgb, var(--h-surface-inverse) 60%, transparent);
     --h-surface-inverse-bg-50: color-mix(in srgb, var(--h-surface-inverse) 50%, transparent);
-    --h-surface-inverse-bg-40: color-mix(in srgb, var(--h-surface-inverse) 40%, transparent);
-    --h-surface-inverse-bg-30: color-mix(in srgb, var(--h-surface-inverse) 30%, transparent);
-    --h-surface-inverse-bg-20: color-mix(in srgb, var(--h-surface-inverse) 20%, transparent);
-    --h-surface-inverse-bg-10: color-mix(in srgb, var(--h-surface-inverse) 10%, transparent);
     --h-border-inverse: color-mix(in srgb, var(--h-text-inverse) 10%, transparent);
     --h-border-inverse-strong: color-mix(in srgb, var(--h-text-inverse) 20%, transparent);
 

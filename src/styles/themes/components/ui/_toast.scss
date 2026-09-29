@@ -10,12 +10,12 @@
 // 高度收敛由 viewport 的 flex gap + DOM 卸载自然收掉。
 @mixin toast-collapsed {
   opacity: 0;
-  border-radius: 0.2rem;
+  border-radius: var(--h-toast-collapse-radius);
 }
 
 @mixin toast-expanded {
   opacity: 1;
-  border-radius: 0.7rem;
+  border-radius: var(--h-toast-border-radius);
 }
 
 // 方向动画：入/出 keyframes 仅方向不同，抽成 mixin 避免 4 段重复
@@ -25,7 +25,7 @@
     animation: $in 0.42s var(--h-motion-ease-ios) both;
 
     &.h-toast--exiting {
-      animation: $out 0.32s var(--h-motion-ease-in-out) forwards;
+      animation: $out var(--h-toast-exit-duration) var(--h-motion-ease-in-out) forwards;
     }
   }
 }
@@ -232,16 +232,18 @@
     line-height: var(--h-line-height-snug);
     color: var(--h-text);
     border: none;
-    border-radius: 0.7rem;
+    border-radius: var(--h-toast-border-radius);
     // 类型/主题变化时的颜色过渡（与 animation 的位移/透明度互不影响）
     box-shadow: var(--h-toast-shadow);
     // 包含 opacity + border-radius：opacity 在 collapsed/expanded mixin 里 toggle，
-    // border-radius 同步收紧到 0.2rem，让整条 toast 在退出过程中圆角收拢与位移一起收。
+    // border-radius 同步收紧到 --h-toast-collapse-radius，
+    // 让整条 toast 在退出过程中圆角收拢与位移一起收。
+    // 退出相关时长统一走 --h-toast-exit-duration，与 JS 的卸载时机同一个来源。
     transition: background-color 0.35s var(--h-motion-ease-ios),
       color 0.35s var(--h-motion-ease-ios),
       box-shadow 0.35s var(--h-motion-ease-ios),
-      opacity 0.32s var(--h-motion-ease-in-out),
-      border-radius 0.32s var(--h-motion-ease-in-out);
+      opacity var(--h-toast-exit-duration) var(--h-motion-ease-in-out),
+      border-radius var(--h-toast-exit-duration) var(--h-motion-ease-in-out);
   }
 
   // 主区：icon + body 横向排列，沿用原 row 间距与 padding
@@ -355,13 +357,13 @@
     justify-content: space-between;
     gap: 0.5rem;
     padding: 0.45rem 0.85rem;
-    // 用 box-shadow 内阴影在顶边画"压暗一档"的细线 + footer 内圈轻微加深。
-    // 比 rgba(0,0,0,0.10) 半透明叠加更稳：后者在深色底（default）和浅色底
-    // （success/info）上对比度差太多，必须按类型维护。
-    // inset top 用深色（alpha 高），在两种底色上都能拉出清晰分隔。
+    // 用 box-shadow 内阴影在顶边画一条分隔线 + footer 内圈轻微加深（值见变量文件的
+    // --h-toast-footer-shadow）。比半透明叠加更稳：后者在深色底（default）和
+    // 浅色底（success/info）上对比度差太多，必须按类型维护。
+    // 刻意用固定黑而不是 --h-text 混色：卡片底色在两种主题下都是饱和的有色面，
+    // 用 --h-text 会在暗色段把这条线翻成近白，在深色底上非常刺眼。
     border-top: 0;
-    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.22),
-      inset 0 -100px 60px -80px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--h-toast-footer-shadow);
   }
 
   // 无 action 时 footer 只剩关闭按钮，space-between 会把它贴左。
@@ -385,7 +387,7 @@
     color: var(--h-primary);
     background: transparent;
     border: none;
-    border-radius: 0.35rem;
+    border-radius: var(--h-border-radius-xs);
     cursor: pointer;
     transition: background-color var(--h-motion-duration-fast) var(--h-motion-ease-standard);
 
@@ -407,7 +409,7 @@
     color: var(--h-text-tertiary);
     background: transparent;
     border: none;
-    border-radius: 0.3rem;
+    border-radius: var(--h-border-radius-xs);
     cursor: pointer;
     transition: background-color var(--h-motion-duration-fast) var(--h-motion-ease-standard),
       color var(--h-motion-duration-fast) var(--h-motion-ease-standard);

@@ -20,6 +20,22 @@
     --h-toast-shadow: var(--h-shadow-base);
     --h-toast-action-hover: var(--h-hover);
     --h-toast-close-hover: var(--h-hover-strong);
+
+    /* 形状：接全局圆角基准，Toast 随 --h-border-radius 一起变圆变方。
+       收起值 0.2rem 是退出动画的目标值，不在全局档位上，属合理偏差点。 */
+    --h-toast-border-radius: var(--h-border-radius);
+    --h-toast-collapse-radius: 0.2rem;
+
+    /* footer 分隔线：固定黑，刻意不跟主题翻转。
+       --h-text 的翻转逻辑是给「中性面」设计的，而这张卡片在两种主题下都是饱和的有色面
+       （类型色染的底），套上去会在暗色段把线翻成近白，在深蓝/深绿底上非常刺眼。
+       固定黑在浅底上压暗、在深色底上是「深色压深色」，两种主题下都读作「凹进一档」。 */
+    --h-toast-footer-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.22),
+      inset 0 -100px 60px -80px rgba(0, 0, 0, 0.18);
+
+    /* 退出动画时长：CSS 的 animation/transition 与 JS 的卸载定时器共用这一个来源
+       （useToast.ts 会读它的计算值）。JS 读不到时兜底 320ms。 */
+    --h-toast-exit-duration: 0.32s;
 }
 
 :root.dark {
