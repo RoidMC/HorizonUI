@@ -15,3 +15,7 @@ export { default as UIInput } from './Input.vue'
 export { default as UIDialog } from './Dialog.vue'
 export { default as UIHoverCard } from './HoverCard.vue'
 export { default as UIToast } from './Toast.vue'
+export { default as UIClientOnly } from './ClientOnly.vue'
+
+// 多组件套件走各自目录 + 目录内 index.ts 出口，避免本文件堆成平铺清单
+export * from './Layout'

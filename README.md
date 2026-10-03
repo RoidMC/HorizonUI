@@ -67,6 +67,40 @@ export default defineConfig({
 - 皮肤全部装在 `@layer horizon` 内。宿主样式不加层，按 CSS 规范天然压过分层样式 —— **覆盖方向不依赖加载顺序**
 - 库不绑定任何品牌字体：`--h-font-family` 是中性栈，品牌字体由宿主设置并自行加载
 
+### 令牌分两层
+
+| 层 | 位置 | 内容 |
+| --- | --- | --- |
+| 全局令牌 | `src/styles/themes/variables/abstracts/_vars.scss` | 调色盘种子、语义色（`color-mix` 推导）、圆角 / 间距 / 字号 / 字重 / 行高 / 动效 / 层级等跨组件档位 |
+| 组件旋钮 | `src/styles/themes/variables/components/ui/_*.scss` | 单个组件的外观开口，命名 `--h-<组件>-<部位>`（`--h-button-border-radius`、`--h-input-bg`、`--h-toast-shadow` …） |
+
+组件旋钮的默认值优先引用全局令牌（`var(--h-...)`），宿主改全局档位即可整体联动；只有确实要偏离全局的组件才写自己的值。
+
+其中 `--h-toast-exit-duration` 比较特殊：它是唯一会被 JS 读取的令牌 —— Toast 用它的计算值决定 DOM 卸载时机，好和 CSS 的退出动画同源（原先 CSS 写 0.32s、JS 写 220ms，动画会在播完前被卸载截断）。改值安全，删掉会退回库内置的 320ms 兜底。
+
+几个有代表性的全局旋钮：
+
+- `--h-border-radius`（0.75rem）—— 圆角基准，`xs` / `sm` / `base` 由它 `calc()` 推导，改一个变量整套组件一起变圆或变方；`none`（0）是绝对值，表示「直角」这一设计语言，有意不参与缩放
+- `--h-palette-*` —— 主题色种子（primary / success / warning / error / info / neutral），改种子即切换整套配色，语义色与 hover / active / soft 变体全部自动重算
+- `--h-z-*` —— 统一叠层顺序，组件内禁止硬编码 `z-index`
+
+宿主覆盖示例（不加 `@layer` 即可盖住库皮肤）：
+
+```css
+:root {
+  --h-border-radius: 0.25rem;       /* 全局：整套圆角一起变小 */
+  --h-panel-card-border-radius: 0;  /* 组件：卡片单独改直角 */
+}
+```
+
+### 令牌准入规则
+
+新增令牌须三条全满足，否则不进库：
+
+1. **有消费者** —— 库内或宿主确实在 `var()` 引用它。不做「以后可能会用」的预留变种
+2. **有注释写明用途** —— 尤其是值看起来怪的（绝对值、刻意偏离全局档位、与其他档位不成比例）
+3. **是偏差点** —— 组件默认值确有理由与全局档位不同；相等的就直接 `var()` 引用全局令牌，不另立一份
+
 ## 约定
 
 - 组件只输出语义类名（`h-` 前缀）+ `data-*` 状态属性（`data-state` / `data-disabled` / `data-invalid`），视觉一律在 SCSS

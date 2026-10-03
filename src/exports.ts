@@ -7,6 +7,20 @@ export type { HorizonConfig } from './config'
 export { useToast, createToastStore, TOAST_KEY } from './composables/useToast'
 export { useAnimatedSize } from './utils/animated-size'
 export type { AnimatedSizeOptions } from './utils/animated-size'
+export { useBreakpoint, BREAKPOINTS } from './composables/useBreakpoint'
+export type { BreakpointKey, UseBreakpointOptions, UseBreakpointReturn } from './composables/useBreakpoint'
+export { useLocalStorageState } from './composables/useLocalStorageState'
+export type { UseLocalStorageStateOptions } from './composables/useLocalStorageState'
+export { useResizeObserver } from './composables/useResizeObserver'
+export type { UseResizeObserverOptions } from './composables/useResizeObserver'
+export { useDismissable } from './composables/useDismissable'
+export type { UseDismissableOptions } from './composables/useDismissable'
+export { useFloatingPosition, computeFloatingPlacement } from './composables/useFloatingPosition'
+export type {
+  FloatingPositionOptions,
+  FloatingPlacement,
+  UseFloatingPositionReturn,
+} from './composables/useFloatingPosition'
 export type {
   ToastStore,
   ToastAPI,

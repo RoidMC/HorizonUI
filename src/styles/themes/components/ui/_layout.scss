@@ -1,0 +1,38 @@
+// HorizonUI · Layout 结构原语
+//
+// 只描述「槽位如何分配空间」，不含任何视觉（背景 / 圆角 / 间距留给宿主）。
+// 方向用 data-direction 而非修饰类：host 侧覆盖不必关心类名拼写，
+// 也避免每个方向都新增一个类名变种。
+
+.h-layout {
+    display: flex;
+    flex-direction: column;
+}
+
+.h-layout[data-direction='row'] {
+    flex-direction: row;
+}
+
+.h-layout-header,
+.h-layout-footer {
+    flex: 0 0 auto;
+}
+
+// 见 UILayoutAside 文档：只预留宽度并允许子元素浮层溢出，不推挤内容。
+.h-layout-aside {
+    flex: 0 0 auto;
+    overflow: visible;
+}
+
+.h-layout-main {
+    flex: 1 1 auto;
+    // flex 嵌套滚动的经典必需项：默认 min-width/min-height 为 auto 时，
+    // 子内容不会收缩，滚动容器撑破父级而不出滚动条。
+    min-width: 0;
+    min-height: 0;
+}
+
+.h-layout-main[data-scroll] {
+    overflow: auto;
+    overscroll-behavior: contain;
+}

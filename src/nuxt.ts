@@ -66,7 +66,11 @@ export default function horizonUINuxtModule(
       dirs.push({
         path: join(srcDir, 'components/UI'),
         prefix: 'UI',
-        pathPrefix: false
+        pathPrefix: false,
+        // 只扫 .vue：套件目录里的 index.ts 是出口 barrel，不是组件。
+        // 若把 .ts 也算候选，Layout/index.ts 会按「目录名即组件名」解析成 UILayout，
+        // 与 Layout/Layout.vue 争抢同一个名字（NUXT_B3011）。
+        extensions: ['.vue']
       })
     })
   }
@@ -85,7 +89,13 @@ export default function horizonUINuxtModule(
         'createHorizon',
         'provideHorizon',
         // AutoSize 内部用它做内容替换模式的动画；开合模式（0↔auto）由宿主自己接六个钩子
-        'useAnimatedSize'
+        'useAnimatedSize',
+        // 通用交互原语：断点 / 偏好持久化 / 浮层定位 / 尺寸观察 / 点外部与 Esc 关闭
+        'useBreakpoint',
+        'useLocalStorageState',
+        'useFloatingPosition',
+        'useResizeObserver',
+        'useDismissable'
       ]
     })
   }
