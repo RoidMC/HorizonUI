@@ -11,18 +11,33 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/roidmc/horizon-ui"
+    "url": "git+https://github.com/roidmc/horizon-ui.git"
   },
+  "files": [
+    "src"
+  ],
   "sideEffects": [
     "**/*.scss",
     "**/*.css"
   ],
   "exports": {
-    ".": "./src/index.ts",
-    "./unstyled": "./src/unstyled.ts",
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./unstyled": {
+      "types": "./src/unstyled.ts",
+      "default": "./src/unstyled.ts"
+    },
     "./styles": "./src/styles/index.scss",
-    "./nuxt": "./src/nuxt.ts",
+    "./nuxt": {
+      "types": "./src/nuxt.ts",
+      "default": "./src/nuxt.ts"
+    },
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "typecheck": "vue-tsc --noEmit",
@@ -34,11 +49,11 @@
   },
   "devDependencies": {
     "@types/qrcode": "1.5.6",
-    "reka-ui": "^2.10.5",
+    "reka-ui": "^2.11.0",
     "sass": "^1.105.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vue": "^3.5.0",
-    "vue-tsc": "^3.1.4"
+    "vue-tsc": "^3.3.12"
   },
   "dependencies": {
     "qrcode": "1.5.4"
