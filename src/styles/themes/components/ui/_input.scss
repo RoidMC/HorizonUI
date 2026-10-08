@@ -7,16 +7,11 @@
 // 原实现是组件内的 scoped 样式块，搬到这里成为全局规则：去掉 scoped，
 // 只对 scoped 有意义的 :deep() 之类写法改成普通后代选择器（本文件并无此类）。
 
+// 标签不在这里：UIInput 不再自带 label，标签统一由 Form 套件的 UIFieldLabel 提供
 .h-input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--h-input-label-gap);
   width: var(--h-input-wrapper-width);
-}
-
-.h-input-label {
-  font-size: var(--h-input-label-font-size);
-  color: var(--h-input-label-color);
 }
 
 .h-input-container {

@@ -1,0 +1,80 @@
+// HorizonUI · Form / Field 皮肤
+//
+// 组件侧只输出 h-form* / h-field* 语义类名，外加 reka 打在根节点上的 data-* 状态
+//（data-invalid / data-valid / data-dirty / data-touched / data-filled / data-focused /
+//  data-disabled）。全部视觉在这里；令牌走 variables/components/ui/_form.scss。
+// 校验时机与错误收集由 reka 提供，皮肤只负责「长什么样」。unstyled 时不挂类名，本文件自然失效。
+
+.h-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--h-form-gap);
+}
+
+.h-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--h-field-gap);
+}
+
+.h-field-label {
+  font-size: var(--h-field-label-font-size);
+  color: var(--h-field-label-color);
+}
+
+.h-field-control {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--h-field-control-height);
+  padding: var(--h-field-control-padding);
+  font-size: var(--h-field-control-font-size);
+  color: var(--h-field-control-text);
+  background-color: var(--h-field-control-bg);
+  border: 1px solid var(--h-field-control-border);
+  border-radius: var(--h-field-control-radius);
+  outline: none;
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    color: var(--h-field-control-placeholder);
+  }
+
+  &:focus {
+    border-color: var(--h-field-control-focus-border);
+  }
+
+  // disabled 既可能来自字段上下文（reka 打到控件的 data-disabled），也可能来自原生 disabled
+  &:disabled,
+  &[data-disabled] {
+    opacity: var(--h-field-control-disabled-opacity);
+    cursor: not-allowed;
+  }
+}
+
+// 无效态：reka 在字段根节点打 data-invalid。控件可能是裸控件（h-field-control，
+// reka 直接把 data-* 打在它身上），也可能是自带包装的复合控件（UIInput 的边框在容器上、
+// UICheckbox 的边框在盒子上）—— 这里统一给它们标红，字段状态就不会只停在文字层。
+.h-field[data-invalid] {
+  .h-field-control,
+  .h-input-container,
+  .h-checkbox-box {
+    border-color: var(--h-field-control-invalid-border);
+  }
+}
+
+.h-field-description {
+  margin: 0;
+  font-size: var(--h-field-description-font-size);
+  color: var(--h-field-description-color);
+}
+
+.h-field-error {
+  font-size: var(--h-field-error-font-size);
+  line-height: var(--h-field-error-line-height);
+  color: var(--h-field-error-color);
+
+  // 极端情形（原生约束失败但拿不到消息）会渲染出空节点：display:none 让 flex 的 gap 一起收起
+  &:empty {
+    display: none;
+  }
+}

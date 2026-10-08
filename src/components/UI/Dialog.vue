@@ -17,12 +17,13 @@
 import {
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogOverlay,
   DialogPortal,
   DialogRoot,
   DialogTitle,
 } from 'reka-ui'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, useSlots } from 'vue'
 import HIcon from '../internal/HIcon.vue'
 import UIAutoSize from './AutoSize.vue'
 import { useSkin } from '../../composables/useUnstyled'
@@ -33,9 +34,19 @@ interface Props {
   open?: boolean
   /** 标题文案；不传（且没有 #title 插槽）则不渲染标题行 */
   title?: string
-  /** 标题左侧图标（iconify 名，交给宿主注入的图标渲染器） */
+  /**
+   * 标题下方的说明文案。
+   * ⚠️ 无论传不传都会渲染一个 DialogDescription：reka 的 DialogContent 会把
+   *    aria-describedby 指到 descriptionId，若 DOM 里找不到带该 id 的元素就会
+   *    dev 告警（Missing `Description`…）。不传时用修饰类把空描述收起 ——
+   *    元素留在 DOM 里满足查表，视觉上不存在。
+   */
+  description?: string
+  /** 标题左侧图标（图标名：先查库内置图标集，未命中再交给宿主注入的渲染器）。
+   *  不传则标题无图标 —— 默认就是「只有文字 + 右上角关闭」，符合常规弹窗习惯。 */
   icon?: string
-  /** 尺寸：给字符串即生效，不传则不写内联尺寸（由 .h-dialog-content 的 padding 与内容决定） */
+  /** 尺寸：不传则不写内联尺寸，由皮肤给的默认宽度 `min(90vw, 28rem)` 自适应；
+   *  传了则内联覆盖（min/maxWidth 仍按 CSS 盒模型参与夹取）。 */
   width?: string
   minWidth?: string
   maxWidth?: string
@@ -61,6 +72,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   open: false,
   title: '',
+  description: '',
   icon: '',
   width: '',
   minWidth: '',
@@ -77,6 +89,10 @@ const emit = defineEmits<{
 }>()
 
 const { skin } = useSkin(() => props.unstyled)
+
+const slots = useSlots()
+/** 是否有真正的描述内容；没有时仍渲染空 DialogDescription，只收起不显示 */
+const hasDescription = computed(() => Boolean(props.description || slots.description))
 
 // 关闭按钮的无障碍名：库不下发 i18n，默认英文常量，宿主用 closeLabel 覆盖成自己的语言。
 const DEFAULT_CLOSE_LABEL = 'Close'
@@ -120,6 +136,14 @@ const onOpenAutoFocus = (e: Event) => {
           </slot>
         </DialogTitle>
 
+        <!-- 无论有没有内容都渲染：满足 reka 对 descriptionId 的查表（否则 dev 告警）；
+             空描述靠 --empty 修饰类收起，视觉上不占位。 -->
+        <DialogDescription
+          :class="[skin('h-dialog-description'), hasDescription ? undefined : skin('h-dialog-description--empty')]"
+        >
+          <slot name="description">{{ props.description }}</slot>
+        </DialogDescription>
+
         <UIAutoSize v-if="props.contentKey !== undefined" :content-key="props.contentKey">
           <slot />
         </UIAutoSize>
@@ -128,7 +152,7 @@ const onOpenAutoFocus = (e: Event) => {
         </template>
 
         <DialogClose :class="skin('h-dialog-close')" :aria-label="props.closeLabel || DEFAULT_CLOSE_LABEL">
-          <HIcon name="tdesign:close" />
+          <HIcon name="tdesign:close" :class="skin('h-dialog-close-icon')" />
         </DialogClose>
       </DialogContent>
     </DialogPortal>

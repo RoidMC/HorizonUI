@@ -19,3 +19,4 @@ export { default as UIClientOnly } from './ClientOnly.vue'
 
 // 多组件套件走各自目录 + 目录内 index.ts 出口，避免本文件堆成平铺清单
 export * from './Layout'
+export * from './Form'

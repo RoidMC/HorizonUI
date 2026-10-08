@@ -10,7 +10,7 @@
 
 # HorizonUI
 
-> Vue 3 UI Library & Source-Distributed & Pure ESM
+> Vue 3 UI Library & Source-Distributed & Pure ESM — Built on [Reka UI](https://reka-ui.com/)
 
 该UI组件库目前仅用于RoidMC内部项目
 

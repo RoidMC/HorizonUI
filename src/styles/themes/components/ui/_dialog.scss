@@ -18,6 +18,9 @@
         border: 1px solid var(--h-border);
         border-radius: var(--h-border-radius-base);
         padding: 1.5rem;
+        // 默认宽度：不传 width 时自适应（视口 90vw，上限 28rem）。宿主显式传 width 会内联覆盖；
+        // 只传 min/maxWidth 的弹窗则按 CSS 盒模型在本值上被夹取，行为与「不给 width」一致。
+        width: min(90vw, 28rem);
         transition: min-width 0.3s ease, max-width 0.3s ease, width 0.3s ease, height 0.3s ease;
         position: fixed;
         top: 50%;
@@ -61,6 +64,18 @@
         font-size: var(--h-icon-size-lg);
     }
 
+    .h-dialog-description {
+        font-size: var(--h-text-size-sm);
+        color: var(--h-text-secondary);
+        margin: 0 0 1rem;
+
+        // 没有描述内容时仍会渲染（reka 按 descriptionId 查表，查不到就 dev 告警），
+        // 这个修饰类把它收起：元素留在 DOM 里满足查表，视觉上不存在。
+        &--empty {
+            display: none;
+        }
+    }
+
     .h-dialog-close {
         position: absolute;
         top: 1.5rem;
@@ -83,7 +98,9 @@
             color: var(--h-text);
         }
 
-        .iconify {
+        // 图标尺寸挂在语义类上（由 Dialog.vue 传给 HIcon），不依赖具体渲染器。
+        // 内联 <svg> 的 width/height 是 1em，故这里改 font-size 即改图标尺寸。
+        .h-dialog-close-icon {
             font-size: var(--h-icon-size-xl);
         }
     }

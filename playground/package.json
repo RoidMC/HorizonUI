@@ -1,0 +1,23 @@
+{
+  "name": "@roidmc/horizon-ui-playground",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "HorizonUI Playground Vue3",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@roidmc/horizon-ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@iconify-json/tdesign": "^1.2.19",
+    "@iconify/vue": "^5.0.3",
+    "@vitejs/plugin-vue": "^6.0.9",
+    "sass": "^1.105.0",
+    "vite": "^8.3.1",
+    "vue": "^3.5.0"
+  }
+}

@@ -1,0 +1,28 @@
+:root {
+    // Form / Field 局部令牌：默认值即「本项目的正确用法」，消费方按需覆盖
+    --h-form-gap: 1rem;
+
+    --h-field-gap: 6px;
+    --h-field-label-font-size: var(--h-text-size-sm);
+    --h-field-label-color: var(--h-text-secondary);
+
+    // 控件本体与 UIInput 的内层 input 同一套几何，两处观感一致
+    --h-field-control-height: 2rem;
+    --h-field-control-padding: 0 0.5rem;
+    --h-field-control-radius: var(--h-border-radius-none);
+    --h-field-control-bg: var(--h-surface-bg-80);
+    --h-field-control-border: var(--h-border);
+    --h-field-control-focus-border: var(--h-text);
+    --h-field-control-invalid-border: var(--h-error);
+    --h-field-control-font-size: var(--h-text-size-sm);
+    --h-field-control-text: var(--h-text);
+    --h-field-control-placeholder: var(--h-text-secondary);
+    --h-field-control-disabled-opacity: 0.5;
+
+    --h-field-description-font-size: var(--h-text-size-sm);
+    --h-field-description-color: var(--h-text-secondary);
+
+    --h-field-error-font-size: var(--h-text-size-sm);
+    --h-field-error-color: var(--h-error);
+    --h-field-error-line-height: 1.4;
+}
