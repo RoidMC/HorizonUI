@@ -11,6 +11,9 @@
   svg {
     width: 100%;
     height: 100%;
+    // uqr 把黑色模块拼成单个 path，非整数缩放下相邻模块的接缝可能露出白边。
+    // 与旧的 qrcode（其 SVG 自带 shape-rendering="crispEdges"）保持一致，关掉抗锯齿。
+    shape-rendering: crispEdges;
   }
 }
 
