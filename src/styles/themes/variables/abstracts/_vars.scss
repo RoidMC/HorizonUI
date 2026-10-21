@@ -41,6 +41,12 @@
 }
 
 :root {
+    /* Color Scheme - 钉住 UA 渲染的原生配色（滚动条、表单控件、默认画布）。
+       不声明时滚动条配色完全交给环境/UA 决定：移动端的文档根滚动条与 PC 的
+       .h-nav-shell__content 元素滚动条上下文不同，会各自默认渲染成一深一浅。
+       显式声明后两端一致，且随 :root.dark 一并翻深。 */
+    color-scheme: light;
+
     /* Font Family - 中性字体栈：组件库不绑定任何品牌字体，
        宿主覆盖 --h-font-family 即可换成自己的品牌栈（品牌字体由宿主负责加载）。 */
     --h-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
@@ -195,6 +201,9 @@
 }
 
 :root.dark {
+    // 见 :root 的 color-scheme 说明：暗主题下 UA 原生配色（含滚动条）整体翻深
+    color-scheme: dark;
+
     --h-surface: var(--h-color-stone-900);
     --h-surface-solid: var(--h-color-stone-900);
     --h-surface-elevated: var(--h-color-stone-800);

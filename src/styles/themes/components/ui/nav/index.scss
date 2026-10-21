@@ -1,0 +1,18 @@
+// HorizonUI · Nav 套件样式入口（桌面侧栏 / 移动抽屉 / 菜单项 / Widget 操作区）
+//
+// 配套组件：components/UI/Nav/（NavShell / NavMenuItem / NavMenuItemNode /
+// WidgetActions / NavDebugPanel）。
+//
+// 容器层（断点切换 / hover 展开 / 触摸语义 / 动画状态机）已归壳内（NavShell.vue），
+// 宿主只给数据与内容。
+//
+// 设计 token：variables/components/ui/_nav.scss。宿主可在自己的 token 层
+// 覆盖任意 --h-nav-* 变量（@layer 机制保证宿主未分层样式天然赢过库）。
+@forward "./navmixins";
+@forward "./navmenu-mixins";
+@forward "./nav-shell";
+@forward "./navmenu-shell";
+@forward "./navmenu-mobile";
+@forward "./navmenu-desktop";
+@forward "./navmenu-widget";
+@forward "./navmenu-item";

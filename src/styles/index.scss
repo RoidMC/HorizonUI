@@ -6,8 +6,11 @@
  *   - animation   组件用到的 keyframes / transition 类（h-spin、h-dialog-* …）
  *   - components  组件规则（语义类名 + data-* 状态）
  *
- * 刻意不含：全局元素重置（main.scss）、字体 @font-face、页面骨架（.horizon-*）、
- * 导航与页脚 —— 那些是宿主的页面层，由宿主决定要不要加载。
+ * 刻意不含：全局元素重置（main.scss）、字体 @font-face、页面骨架（.horizon-*）、页脚。
+ *
+ * 导航（Nav 套件：侧栏 / 抽屉 / 菜单项 / Widget 操作区）自本版起进库，与 Layout
+ * 套件同属「结构类」先例——它们输出 h-nav-* 语义类名、token 可被宿主覆盖，
+ * 容器层（断点切换 / hover 展开 / 触摸语义）仍留在宿主，由 Nav 零件组装。
  *
  * ── 级联层（@layer）─────────────────────────────────────────────
  * 库的全部规则都装在 @layer horizon 里。CSS 规范规定「未分层的样式永远压过

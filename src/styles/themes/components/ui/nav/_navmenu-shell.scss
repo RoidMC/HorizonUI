@@ -1,0 +1,82 @@
+// ==================== 1. 导航容器 ====================
+.h-nav-container {
+    position: sticky;
+    width: fit-content;
+    z-index: var(--h-z-nav);
+}
+
+// ==================== 2. 导航包装器 ====================
+.h-nav-wrapper {
+    &-desktop {
+        min-width: var(--h-nav-desktop-min-width);
+    }
+
+    &-mobile {
+        min-height: var(--h-nav-mobile-bar-height);
+    }
+}
+
+// ==================== 3. 导航切换动画 ====================
+// 时长走 :root 的 --h-nav-transition-duration（0.4s），见 variables/components/ui/_nav.scss。
+// 这些类是时长的唯一消费者；外壳只在过渡结束时收动画窗口（Vue 从 computedStyle 探测），
+// JS 不再读取该变量。
+.h-nav-transition {
+
+    &-enter-active,
+    &-leave-active {
+        // 不给基础类写 transition: all —— 两个 wrapper 变体各自定义了唯一需要动的
+        // 尺寸属性（min-width / min-height），基础声明只会被它们按特异性完全覆盖。
+        &.h-nav-wrapper-desktop {
+            transition: min-width var(--h-nav-transition-duration) ease;
+        }
+
+        &.h-nav-wrapper-mobile {
+            transition: min-height var(--h-nav-transition-duration) ease;
+        }
+
+        .h-nav-mobile {
+            transition: height var(--h-nav-transition-duration) ease, transform var(--h-nav-transition-duration) ease;
+        }
+
+        .h-nav-desktop {
+            transition: width var(--h-nav-transition-duration) ease, transform var(--h-nav-transition-duration) ease;
+        }
+    }
+
+    &-enter-from,
+    &-leave-to {
+        &.h-nav-wrapper-desktop {
+            min-width: 0;
+        }
+
+        &.h-nav-wrapper-mobile {
+            min-height: 0;
+        }
+
+        .h-nav-mobile {
+            transform: translateY(calc(-1 * var(--h-nav-mobile-bar-height)));
+            height: var(--h-nav-mobile-bar-height);
+        }
+
+        .h-nav-desktop {
+            // ⚠️ RTL 适配：收起态把侧栏推出「阅读起始侧」屏幕外。
+            // LTR 侧栏在左 → translateX(-100%)；RTL 镜像后在右 → 需 +100%。
+            // 逻辑属性无法表达 transform，须按 dir 显式翻转符号。
+            transform: translateX(calc(-1 * var(--h-nav-desktop-min-width)));
+            width: var(--h-nav-desktop-min-width);
+
+            &[data-expanded] {
+                width: var(--h-nav-desktop-max-width);
+                transform: translateX(calc(-1 * var(--h-nav-desktop-max-width)));
+            }
+
+            [dir='rtl'] & {
+                transform: translateX(var(--h-nav-desktop-min-width));
+
+                &[data-expanded] {
+                    transform: translateX(var(--h-nav-desktop-max-width));
+                }
+            }
+        }
+    }
+}

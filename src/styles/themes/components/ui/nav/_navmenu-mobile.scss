@@ -1,0 +1,240 @@
+@use "./navmixins" as HorizonMixins;
+@use "./navmenu-mixins" as *;
+
+// ==================== 5. 移动端导航 ====================
+//
+// 滚动根与滚动链：移动态没有内部滚动容器（_nav-shell.scss 的 column 分支 height: auto），
+// 文档本身就是滚动根；而 menubar / 展开的 h5menu / 底部 widget 条都是 position: fixed，
+// 不是任何滚动容器的后代 —— 滚轮或触摸落在它们上面时，浏览器只能一路往上滚文档，把已被
+// 抽屉遮住的背后内容带着跑（桌面态内容区自己是 height:100dvh 的滚动容器，文档无溢出，故不泄漏）。
+//
+// 处理原则：就地吸收。让这些固定层各自成为滚动容器并声明 overscroll-behavior: contain，
+// 滚动链到它们为止，文档继续整页滚动 —— 不锁页面、不隐藏滚动条（滚动条因此恒定可见），
+// 也不需要 JS 冻结滚动位置。它们自身内容不溢出，故 overflow: hidden 只用于建立滚动容器，
+// 既不产生滚动条也不裁剪内容（装饰 ::before 均 inset: 0；「更多」弹窗经 reka-ui portal
+// 到 body，不受祖先 overflow 影响）。以后新增固定层时按同一原则处理。
+//
+// 例外：menubar 是常驻顶栏（抽屉关着时也在），拦截必须限定在抽屉展开态 —— 否则关闭态下
+// 触摸/滚轮落在 bar 上会被它吃掉，页面滚不动。见文件末尾 [data-drawer-open] 规则。
+.h-nav-mobile {
+    position: fixed;
+    // 显式宽度：fixed 且无 width 时按内容 shrink-to-fit，而 menubar / h5menu
+    // 的子元素均不占流——容器宽度会塌缩（实测 204px，菜单与 widget 只露出一
+    // 小截、右侧整片留白）。老版靠宿主上下文兜住，库内显式补齐。
+    //
+    // 用 100%（= ICB，不含经典滚动条）而不是 100vw/100dvw：vw 计数含滚动条
+    // 宽度，会把「展开态因装饰 mixin 变成 in-flow 的 h5menu」（及其内容、底部
+    // widget 横条）按含滚动条宽铺开，而 fixed 的 menubar 仍按 100%（不含滚动
+    // 条）解析——两者相差正好一个滚动条宽，右边缘出现错位台阶；且视图切换过
+    // 渡中本层带 transform 会变成固定后代的包含块，vw 基准会让 menubar 再跳
+    // 一个滚动条宽。100% 与 menubar 同基准，静止与过渡都不跳。
+    width: 100%;
+}
+
+.h-nav-section-mobile {
+    display: flex;
+    flex-direction: row;
+
+    // 各子元素抬到装饰层（::before）之上；按模板实际子元素点名，
+    // 匿名选择器在新增子元素时会静默扩大命中面。
+    > .h-nav-logo-mobile,
+    > .menubar-actions,
+    > .h5menu-content,
+    > .h-nav-widget-section--actions {
+        z-index: 1;
+    }
+
+    &.menubar {
+        position: fixed;
+        top: 0;
+        inset-inline-start: 0;
+        width: 100%;
+        z-index: calc(var(--h-z-drawer) + 1);
+        align-items: center;
+        justify-content: space-between;
+        background-color: var(--h-nav-mobile-background-color);
+        height: var(--h-nav-mobile-bar-height);
+        padding-inline: var(--h-nav-mobile-bar-padding-x);
+        // 滚动链拦截只在抽屉展开时生效（见文件头与文件末尾 [data-drawer-open] 规则）：
+        // bar 常驻，无条件 overflow: hidden 会让关闭态下滚轮被 bar 吃掉、页面滚不动。
+
+        // 品牌装饰 mask：仅放在常驻 menubar，不覆盖临时全屏 h5menu
+        @include nav-endless-mask;
+
+        .menubar-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1;
+        }
+
+        .menu-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            // 保证顶栏操作按钮尺寸一致，且 ≥44px 触摸目标
+            width: var(--h-nav-touch-target);
+            height: var(--h-nav-touch-target);
+            // 图标字号挂容器、不挂 .iconify：HIcon 命中库内置图标集（如 tdesign:close）时
+            // 内联的是 <svg width="1em">，没有 .iconify 类 —— 只写 .iconify 会让「关闭」图标
+            // 退回继承字号（16px，实测旧版 iconify 渲染器是 28px）。放容器上，内联 svg 的 1em
+            // 与宿主 iconify 渲染器都能拿到同一个字号。
+            font-size: var(--h-nav-mobile-icon-size);
+            cursor: pointer;
+            color: var(--h-text);
+            transition: transform var(--h-nav-duration-normal) ease;
+
+            &:active {
+                transform: scale(0.95);
+            }
+        }
+    }
+
+    &.h5menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0;
+        z-index: var(--h-z-drawer);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background-color: var(--h-nav-background-color);
+        color: var(--h-text);
+        padding-top: var(--h-nav-mobile-bar-height);
+        opacity: 0;
+        transition:
+            height var(--h-nav-h5menu-collapse-duration) var(--h-nav-transition-timing),
+            opacity 0.35s var(--h-nav-transition-timing);
+
+        &[data-expanded] {
+            // 与 .horizon-container 同源：走 dvh 兼容 mixin（vh 回退 + dvh 现代浏览器）。
+            // 裸 100vh 在移动端等于「大视口」（lvh），会比可见区高一截，
+            // 把底部的 WidgetActions 横条推到浏览器工具栏之下 —— 展开态才露出来。
+            @include HorizonMixins.viewport-viewport-property(height, 100);
+            opacity: 1;
+
+            // 展开态铺六边形底纹，复用 error / loading 的 decorator 语言（::before 叠加 hexagons.svg），
+            // 让「展开」这一状态与错误/加载态共享同一视觉语义。
+            @include HorizonMixins.decorator-svg-background-overlay($opacity: 0.1, $z-index: 0, $image-url: var(--h-nav-hexagons-url, none), $size: 20px);
+        }
+
+        .h5menu-content {
+            width: 100%;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem;
+            overflow-y: auto;
+            // 抽屉内容滚到底后不再把滚动链到文档（本层本就是滚动容器，只需声明 contain）
+            overscroll-behavior: contain;
+            @include HorizonMixins.hide-scrollbar;
+            // 抬到六边形 ::before（z-index:0）之上，避免装饰纹样遮挡菜单项
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(1rem);
+            transition:
+                opacity 0.4s var(--h-nav-transition-timing) 0.12s,
+                transform 0.45s var(--h-nav-transition-timing) 0.12s;
+        }
+
+        &[data-expanded] .h5menu-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        // 移动端底部 WidgetActions 横条
+        .h-nav-widget-section--actions {
+            width: 100%;
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background-color: var(--h-surface-elevated);
+            border-top: 1px solid var(--h-border);
+            // 最低高度 2rem 作为安全下限
+            min-height: 2rem;
+            // 抬到六边形底纹之上
+            position: relative;
+            z-index: 1;
+            // 就地吸收滚动链（见文件头「滚动根与滚动链」说明）：底条自身不滚，滚轮在此截止
+            overflow: hidden;
+            overscroll-behavior: contain;
+            opacity: 0;
+            transform: translateY(1rem);
+            transition:
+                opacity 0.4s var(--h-nav-transition-timing) 0.16s,
+                transform 0.45s var(--h-nav-transition-timing) 0.16s;
+
+            &.is-mobile .h-nav-widget__actions-decor {
+                max-width: none;
+                opacity: 1;
+                flex-shrink: 0;
+                white-space: nowrap;
+            }
+
+            // 移动端按钮栏：flex:1 占据剩余空间，min-width:0 允许收缩，
+            // 按钮通过 JS 动态计算可见数量，超出的收进"更多"菜单，
+            // 不再需要 overflow:hidden —— 否则 hover 的 box-shadow 环会被裁剪
+            .h-nav-widget-mobile-bar {
+                flex: 1;
+                min-width: 0;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .h-nav-widget-button--mobile {
+                width: 2rem;
+                height: 2rem;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.25rem;
+                color: var(--h-text);
+                border-radius: 3px;
+                transition:
+                    color 0.25s var(--h-nav-transition-timing),
+                    background-color 0.25s var(--h-nav-transition-timing);
+
+                // 触屏设备不需要 hover 环，覆盖桌面端的 box-shadow hover 效果
+                &:hover {
+                    background-color: var(--h-nav-hover-color-white-rgba);
+                    box-shadow: none;
+                }
+
+                &:active,
+                &.active {
+                    color: var(--h-primary);
+                    background-color: var(--h-primary-soft);
+                    box-shadow: none;
+                }
+
+                .iconify {
+                    font-size: inherit;
+                }
+            }
+        }
+
+        &[data-expanded] .h-nav-widget-section--actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+// 抽屉展开时才在 menubar 上就地吸收滚动链（见文件头「滚动根与滚动链」说明）。
+// menubar 是常驻 fixed 顶栏：若无条件 overflow: hidden，它就成了滚动容器，抽屉关闭时
+// 触摸/滚轮落在 bar 上会被它吃掉（bar 自身无内容可滚），页面就滚不动了。故拦截只在
+// 展开态生效 —— 关闭态 menubar 回归 overflow: visible，滚轮穿透到文档正常整页滚动。
+// 状态源是外壳挂在 wrapper 上的 data-drawer-open（NavShell 的 drawerOpen），无需 JS 或 :has()。
+.h-nav-wrapper-mobile[data-drawer-open] .h-nav-section-mobile.menubar {
+    overflow: hidden;
+    overscroll-behavior: contain;
+}

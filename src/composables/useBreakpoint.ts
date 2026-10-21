@@ -56,17 +56,17 @@ function ensureResizeListener(): void {
   width.value = window.innerWidth
   height.value = window.innerHeight
 
-  // 150ms 防抖：拖动窗口时 resize 每帧触发，直接写会带动整棵订阅树重算
-  let timer: number | null = null
+  // 直接写入，不做防抖。
+  // 代价可控：浏览器本身已把 resize 合并到每帧最多一次，且 ref 赋同值不触发更新，
+  // 故订阅树最多每帧重算一次（拖窗口时的正常开销）。
+  // 收益：跨断点切换必须立刻动手——若在此处防抖（原为 150ms），这 150ms 里
+  // isMobileView 仍是旧值，壳会继续渲染旧形态，而视口已经变宽，
+  // position: fixed + width: 100% 的移动端顶栏/抽屉就会按新视口宽铺满一屏。
   window.addEventListener(
     'resize',
     () => {
-      if (timer !== null) clearTimeout(timer)
-      timer = window.setTimeout(() => {
-        timer = null
-        width.value = window.innerWidth
-        height.value = window.innerHeight
-      }, 150)
+      width.value = window.innerWidth
+      height.value = window.innerHeight
     },
     { passive: true }
   )

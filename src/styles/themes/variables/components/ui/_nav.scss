@@ -1,0 +1,82 @@
+// HorizonUI · Nav 套件设计 token
+//
+// 宿主覆盖方式：在自己的 token 层重新声明同名变量即可（@layer 机制保证
+// 宿主未分层样式天然压过库）。站点特化的资源引用（如背景图 URL）也应在此
+// 覆盖——库内只提供安全默认。
+:root {
+    // ==================== 全局变量 ====================
+    --h-nav-background-color: var(--h-surface);
+    // Widget pill 文字/图标/激活点：pill 背景是 --h-surface-bg-90（跟随主题表面），
+    // 故用 --h-text 而非写死白，避免亮色主题下白字糊在浅表面上。
+    --h-nav-background-color-white: var(--h-text);
+    --h-nav-background-color-black-rgba: var(--h-surface-bg-50);
+    --h-nav-hover-color: var(--h-surface-sunken);
+    // Widget 元素 hover：贴在 surface pill 上，用 --h-text 12% 叠加跟随主题（深/浅主题皆可见），
+    // 替代写死白 30%（亮色主题下不可见）。
+    --h-nav-hover-color-white-rgba: color-mix(in oklch, var(--h-text) 12%, transparent);
+
+    --h-nav-svg-overlay-size: 240px;
+    // contour 等高线装饰图。库内默认 none（库零宿主资源依赖）；
+    // 站点在自有 token 层覆盖为真实 URL（如 url('@/assets/imgs/res/contour_map.svg')）。
+    --h-nav-contour-map-url: none;
+    // 移动端 hexagons 纹理图：同上，宿主覆盖。
+    --h-nav-hexagons-url: none;
+    // 桌面侧栏 / 移动 menubar 的 endless_mask 装饰图：同上，宿主覆盖。
+    --h-nav-endless-mask-url: none;
+    // svg-background-overlay mixin 的默认图（未显式传 $image-url 时）。
+    --h-nav-svg-overlay-url: none;
+    // contour 等高线装饰：跟随主题的可染色描边（配合 nav-contour-overlay 的 mask 上色）。
+    --h-nav-contour-color: color-mix(in srgb, var(--h-text) 40%, transparent);
+    --h-nav-transition-timing: var(--h-motion-ease-emphasized);
+    // 移动/桌面视图切换动画时长：唯一来源（.h-nav-transition-* 的 leave/enter-active）。
+    // 外壳不再读它——过渡何时结束由 Vue 从 computedStyle 探测
+    --h-nav-transition-duration: 0.4s;
+    // 交互档位时长：只收敛 Nav 内数值完全相等的字面量（0.2s / 0.3s）；
+    // 0.25s / 0.35s / 0.45s 等没有对应档位，继续写字面量，不做近似合并。
+    --h-nav-duration-fast: 0.2s;
+    --h-nav-duration-normal: 0.3s;
+    // ==================== 桌面端变量 ====================
+    --h-nav-desktop-background-color: var(--h-primary);
+    --h-nav-desktop-logo-size: 3.5rem;
+    --h-nav-desktop-min-width: 4rem;
+    --h-nav-desktop-max-width: 12rem;
+    // 桌面端展开/收起动画时长：与 --h-nav-h5menu-collapse-duration 对称命名。
+    // 侧栏宽度、内部 padding、widgets 位移三处共用，保证展开时同步到位。
+    --h-nav-desktop-expand-duration: 0.6s;
+    // 桌面端 widgets 区展开时的延迟（让内容区先动，widgets 后跟）
+    --h-nav-desktop-widgets-delay: 0.15s;
+    // ==================== 移动端变量 ====================
+    --h-nav-mobile-background-color: var(--h-primary);
+    --h-nav-mobile-drawer-color: var(--h-surface-elevated);
+    --h-nav-mobile-logo-size: 2.5rem;
+    --h-nav-mobile-bar-height: 3.5rem;
+    // 顶栏左右内边距（成对出现，改一处即联动）
+    --h-nav-mobile-bar-padding-x: 0.8rem;
+    // 顶栏图标字号（.menu-toggle 内的 iconify）
+    --h-nav-mobile-icon-size: 1.75rem;
+    // 顶栏触摸目标尺寸，保证 ≥44px 可点区域
+    --h-nav-touch-target: 2.75rem;
+    // h5menu 收回动画时长：唯一来源（.h5menu 的 height 过渡）；
+    // 外壳等的是这条过渡的 finished，不再读本变量
+    --h-nav-h5menu-collapse-duration: 0.5s;
+    // 抽屉子菜单（--drawer-inner）底部圆角：与顶级卡片展开态的「上圆下直」拼成一个整体，
+    // 改这里即同步父卡片与子菜单的接缝形状
+    --h-nav-drawer-radius: var(--h-border-radius-sm);
+
+    // ==================== 布局常量 ====================
+    --h-nav-widget-spacing: 0.25rem;
+    // 悬浮子菜单（float 模式）面板最小宽度
+    --h-nav-float-menu-min-width: 11.25rem;
+
+    // ==================== Widget 操作按钮区 ====================
+    --h-nav-widget-actions-bg: var(--h-surface-bg-90);
+    // 按钮固定正方形边长与 pill 内边距：SCSS 布局与 TS 位移共用同一来源
+    --h-nav-widget-btn-size: 1.75rem;
+    --h-nav-widget-pad: 0.25rem;
+    // 相邻按钮位移（按钮尺寸 + 间距）：WidgetActions 的 slotTransform 直接引用，
+    // 避免脚本里重复硬编码 calc 与样式漂移。
+    --h-nav-widget-btn-offset: calc(var(--h-nav-widget-btn-size) + var(--h-nav-widget-spacing));
+    // 装饰文字（展开态显示）：斜杠/文字分别跟随主色与前景色
+    --h-nav-widget-decor-slash: color-mix(in oklch, var(--h-primary) 50%, transparent);
+    --h-nav-widget-decor-text: color-mix(in oklch, var(--h-text) 30%, transparent);
+}

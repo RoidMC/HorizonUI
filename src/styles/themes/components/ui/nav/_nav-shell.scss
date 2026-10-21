@@ -1,0 +1,51 @@
+// ==================== NavShell 布局 ====================
+// 壳的骨架：根 flex 容器 + 内容区。nav 部分（shell/desktop/mobile/item/widget）
+// 由同目录其余文件负责；这里只管「nav 与内容如何排布」。
+//
+// data-direction 由 NavShell 的 containerDirection 驱动：nav 过渡期间保持旧
+// 方向（防内容硬跳），动画结束后才翻转——与驱动它的 JS 时序一一对应。
+
+.h-nav-shell {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: row;
+
+    &[data-direction='column'] {
+        flex-direction: column;
+    }
+}
+
+.h-nav-shell__content {
+    flex: 1 1 auto;
+    min-width: 0;
+    // 内容盒是「纵向 flex」：宿主把内容列设为定高（用下面的 --h-nav-content-block）
+    // 即可让正文自滚、页脚钉底，无需按方向写两套尺寸。
+    display: flex;
+    flex-direction: column;
+    // 发布「内容块定高」：内容盒自身高度在移动态是 auto + min，不确定，不足以
+    // 让内容列内的百分比高度（如站点首页「贴底」的 min-height:100%）解析；
+    // 宿主按本值给内容列一个确定高度即可。桌面 = 满视口，移动 = 视口 − 顶栏。
+    //
+    // 注意：这是「稳态」值，不会随离场动画变化——移动→桌面离场时占位条的
+    // min-height 从顶栏高过渡到 0（内容盒自身会靠 flex-grow 长回 100dvh），
+    // 此 token 仍停在视口−顶栏。宿主若只写 height: var(--h-nav-content-block)，
+    // 内容列不会跟着长，底部会差出顶栏高、露出宿主底色。
+    // 正确用法：内容列同时给 flex: 1 1 auto —— height 作 flex-basis 基准，
+    // 多出的空间由 flex-grow 吃掉（见 rmc-website LayoutNav.vue）。
+    --h-nav-content-block: 100dvh;
+
+    // 桌面态：内容区自己滚，侧栏满高常驻——hover 展开时内容区平滑让位
+    .h-nav-shell[data-direction='row'] & {
+        height: 100dvh;
+        overflow-y: auto;
+    }
+
+    // 移动态：整页滚。navContainer 的占位条（menubar 高度）已把内容推到固定
+    // menubar 之下。可见区 = 视口 − 顶栏，故内容块下限同值；若沿用 100dvh，
+    // 短内容时「占位条 + 内容盒」会超出视口一整个顶栏高，凭空多出可滚长度。
+    .h-nav-shell[data-direction='column'] & {
+        --h-nav-content-block: calc(100dvh - var(--h-nav-mobile-bar-height));
+        height: auto;
+        min-height: var(--h-nav-content-block);
+    }
+}

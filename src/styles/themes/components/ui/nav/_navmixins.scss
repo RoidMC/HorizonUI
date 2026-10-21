@@ -1,0 +1,128 @@
+// HorizonUI · Nav 套件私有 mixin
+//
+// 从 rmc-website 宿主的 themes/mixins 抽取 Nav 实际用到的那几个，保持调用点
+// 命名不变（HorizonMixins.viewport-viewport-property 等），只把 @use 目标从
+// 宿主 mixins 目录换到本文件——Nav 套件因此自包含，不依赖宿主的 mixin 设施。
+//
+// 与宿主版的差异（仅两点）：
+//   1. svg-background-overlay 的 $image-url 默认值不再是 '@assets/...'（Nuxt
+//      别名，库零 Nuxt 依赖不能带），改为 var(--h-nav-svg-overlay-url, none)；
+//   2. 其余逻辑逐行照搬，未做顺手优化。
+@use "sass:string";
+@use "sass:map";
+@use "sass:list";
+
+// 视口单位：项目基线 Chrome 111+，dvh 自 108 起已支持，不再输出 vh 回退
+// （回退值在现代浏览器里永远被下一行覆盖，只会让产物多一倍声明）。
+@mixin viewport-viewport-property($property, $value) {
+    #{$property}: #{$value}dvh;
+}
+
+// 全宽（dvh/dvw 同理：只写现代单位）
+@mixin viewport-viewport-width($value) {
+    width: #{$value}dvw;
+}
+
+// 隐藏滚动条但保留滚动能力（Firefox + WebKit）
+@mixin hide-scrollbar() {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+// SVG 背景遮罩。$image-url 传 var(...) 时直出（供宿主经 CSS 变量注入资源）。
+@mixin decorator-svg-background-overlay($opacity: 0.8, $z-index: -1, $image-url: var(--h-nav-svg-overlay-url, none), $size: cover) {
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        @if string.index($image-url, 'var(') or string.index($image-url, 'url(') {
+            background-image: $image-url;
+        }
+
+        @else {
+            background-image: url($image-url);
+        }
+
+        background-size: $size;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: inherit;
+        opacity: $opacity;
+        z-index: $z-index;
+        pointer-events: none;
+
+        // 固定大小模式下启用拉伸填充，避免重排
+        @if $size !=cover and $size !=contain {
+            background-repeat: repeat;
+        }
+    }
+}
+
+// 水平渐变过渡条（hover 点亮，详见宿主 _decorators.scss 原注释）
+@mixin decorator-horizon-transition-bar(
+    $position-map: (inline-start: 2%, top: 50%),
+    $transform: translateY(-50%),
+    $width: 0.2rem,
+    $height: 65%,
+    $border-radius: 0.1rem,
+    $colors: (var(--h-info), var(--h-warning), var(--h-primary)),
+    $gradient-direction: to-bottom,
+    $transition-duration: var(--h-nav-duration-normal),
+    $transition-easing: ease
+) {
+    $color1: list.nth($colors, 1);
+    $color2: list.nth($colors, 2);
+    $color3: list.nth($colors, 3);
+
+    $gradient-map: (
+        to-bottom: linear-gradient(to bottom, $color1 0%, $color1 33.33%, $color2 33.33%, $color2 66.66%, $color3 66.66%, $color3 100%),
+        to-top: linear-gradient(to top, $color1 0%, $color1 33.33%, $color2 33.33%, $color2 66.66%, $color3 66.66%, $color3 100%),
+        to-right: linear-gradient(to right, $color1 0%, $color1 33.33%, $color2 33.33%, $color2 66.66%, $color3 66.66%, $color3 100%),
+        to-left: linear-gradient(to left, $color1 0%, $color1 33.33%, $color2 33.33%, $color2 66.66%, $color3 66.66%, $color3 100%)
+    );
+
+    &::after {
+        content: '';
+        position: absolute;
+        transform: $transform;
+
+        @each $prop, $value in $position-map {
+            @if $prop == inline-start {
+                inset-inline-start: $value;
+            } @else if $prop == inline-end {
+                inset-inline-end: $value;
+            } @else {
+                #{$prop}: $value;
+            }
+        }
+
+        width: $width;
+        height: $height;
+        border-radius: $border-radius;
+        background-image: map.get($gradient-map, $gradient-direction);
+        background-size: 100% 300%;
+        background-position: 0 100%;
+        clip-path: inset(0 0 0 0);
+        // 只过渡装饰条自身的两个属性（不能用 all：会把 color/padding 等无关属性也带进动画）
+        transition:
+            background-position $transition-duration $transition-easing,
+            background-size $transition-duration $transition-easing;
+    }
+
+    // hover 点亮仅限支持悬停的指针设备：触屏 tap 后 :hover 会粘滞
+    @media (hover: hover) {
+        &:hover::after {
+            background-position: 0 0%;
+            background-size: 100% 100%;
+        }
+    }
+}
